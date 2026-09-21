@@ -60,6 +60,7 @@ export function FeedStage({
 
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [isScrubbing, setIsScrubbing] = useState(false);
   const [liked, setLiked] = useState<Set<string>>(new Set());
   const [followed, setFollowed] = useState<Set<string>>(new Set());
   const [burst, setBurst] = useState(0);
@@ -162,6 +163,7 @@ export function FeedStage({
       paintProgress(0);
       setPaused(false);
       setForcedLandscape(false);
+      setIsScrubbing(false);
       setIndex(next);
     },
     [index, item, items.length, paintProgress, send, sheet],
@@ -516,7 +518,7 @@ export function FeedStage({
           {!desktop && rail}
         </div>
         <div
-          className="absolute inset-x-0 bottom-0 z-20 flex items-center gap-3 px-3 pb-2 pt-1"
+          className="group/timeline absolute inset-x-0 bottom-0 z-20 flex items-center gap-3 px-3 pb-2 pt-1"
           onPointerDown={(e) => e.stopPropagation()}
           onPointerUp={(e) => e.stopPropagation()}
         >
@@ -532,6 +534,7 @@ export function FeedStage({
               e.preventDefault();
               e.stopPropagation();
               seekingRef.current = true;
+              setIsScrubbing(true);
               e.currentTarget.setPointerCapture(e.pointerId);
               seekToRatio(e.clientX);
             }}
@@ -543,9 +546,17 @@ export function FeedStage({
             onPointerUp={(e) => {
               e.stopPropagation();
               seekingRef.current = false;
+              setIsScrubbing(false);
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              }
             }}
-            onPointerCancel={() => {
+            onPointerCancel={(e) => {
               seekingRef.current = false;
+              setIsScrubbing(false);
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              }
             }}
             onKeyDown={(e) => {
               if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -563,7 +574,13 @@ export function FeedStage({
               </div>
             </div>
           </div>
-          <p ref={timeEl} className="shrink-0 tabular text-[11px] text-paper/80">
+          <p
+            ref={timeEl}
+            className={cn(
+              "timeline-counter shrink-0 tabular text-[11px] text-paper/80 transition-opacity duration-200",
+              isScrubbing ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+            )}
+          >
             0s / {Math.max(1, Math.round(item.video.duration_ms / 1000))}s
           </p>
         </div>
