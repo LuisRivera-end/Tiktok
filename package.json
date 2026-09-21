@@ -1,0 +1,15 @@
+{
+  "name": "veta",
+  "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "scripts": {
+    "dev:web": "pnpm --filter veta-web dev",
+    "build:web": "pnpm --filter veta-web build",
+    "test:web": "pnpm --filter veta-web test",
+    "test:e2e": "pnpm --filter veta-web test:e2e",
+    "lint:web": "pnpm --filter veta-web lint"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

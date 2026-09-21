@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Syne", sans-serif;
+  --font-sans: "Atkinson Hyperlegible", sans-serif;
+  --color-void: #07060a;
+  --color-ink: #100e14;
+  --color-ink-2: #1c1824;
+  --color-heat: #e39b6a;
+  --color-heat-2: #f0c9a8;
+  --color-lab: #4db8b0;
+  --color-paper: #f3ede4;
+  --color-paper-2: #e7ddd0;
+  --color-skip: #e25c4a;
+  --color-line: #2a2433;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-void);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (hover: hover) {
+  .group\/timeline:hover .timeline-counter,
+  .group\/timeline:focus-within .timeline-counter {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

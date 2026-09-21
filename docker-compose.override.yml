@@ -1,0 +1,6 @@
+# Auto-cargado. Las bases no se publican en el host para no chocar
+# con un Mongo/Postgres ya instalado. El API y el front sí.
+services:
+  api:
+    environment:
+      APP_ENV: lab

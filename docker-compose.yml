@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:16.6-alpine
+    environment:
+      POSTGRES_USER: veta
+      POSTGRES_PASSWORD: veta
+      POSTGRES_DB: veta
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U veta -d veta"]
+      interval: 5s
+      timeout: 3s
+      retries: 8
+
+  mongo:
+    image: mongo:7.0.16
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 8
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: lab
+      SECRET_KEY: veta-lab-secret-change-in-this-machine-only
+      DATABASE_URL: postgresql+asyncpg://veta:veta@postgres:5432/veta
+      MONGODB_URL: mongodb://mongo:27017
+      MONGO_DB: veta_telemetry
+      API_CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173
+      SEED_ON_START: "true"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - api_media:/app/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  mongodata:
+  api_media:
