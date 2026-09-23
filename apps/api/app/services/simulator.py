@@ -1,100 +1,92 @@
 from __future__ import annotations
 
-import random
 from datetime import datetime, timezone
+from uuid import uuid4
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User, Video
 from app.mongo import get_mongo
-from app.recsys.pipeline import rank_organic_feed
-from app.recsys.types import PipelineConfig
-from app.services.catalog import features_from_profile, to_candidate
+from app.seed import inject_corpus_if_needed
+from app.services.corpus import CorpusActor, CorpusClip, generate_events
 from app.telemetry.profile import apply_event, empty_profile
 
 
-async def run_simulation(db: AsyncSession, users: int, days: int, events_per_user: int) -> dict:
+async def run_simulation(
+    db: AsyncSession,
+    users: int,
+    days: int,
+    events_per_user: int,
+    pass_id: str = "",
+) -> dict:
+    await inject_corpus_if_needed(db)
     people = list((await db.execute(select(User).where(User.role.in_(["viewer", "creator"])))).scalars())
     videos = list((await db.execute(select(Video))).scalars())
     if not people or not videos:
-        return {"events": 0, "users": 0}
+        return {"events": 0, "users": 0, "regions": 0}
+
+    actors = [CorpusActor(id=person.id, region=person.region or "", role=person.role) for person in people]
+    clips = [
+        CorpusClip(
+            id=video.id,
+            region=video.region or "",
+            category=video.category,
+            duration_ms=video.duration_ms,
+            creator_id=video.creator_id,
+            audio_id=video.audio_id,
+            tags=tuple(video.tags or []),
+        )
+        for video in videos
+    ]
+    events = generate_events(
+        actors,
+        clips,
+        users=users,
+        days=days,
+        events_per_user=events_per_user,
+        pass_id=pass_id,
+    )
+    if not events:
+        return {"events": 0, "users": 0, "regions": 0}
+
+    # Re-running the same simulation is a new set of sessions, not a duplicate
+    # of the previous pass with the same actor, day and feed position.
+    run_id = uuid4().hex[:12]
+    for event in events:
+        event["session_id"] = f"{run_id}-{event['session_id']}"
 
     mongo = get_mongo()
-    catalog = [to_candidate(video) for video in videos]
-    by_id = {video.id: video for video in videos}
-    rng = random.Random(42)
-    sample = people[:users]
-    written = 0
+    stamped = datetime.now(timezone.utc)
+    await mongo.events.insert_many([{**event, "ts": stamped} for event in events])
 
-    for person in sample:
-        profile_doc = await mongo.user_profiles_online.find_one({"user_id": person.id})
-        profile = profile_doc or empty_profile(person.id)
-        for _day in range(days):
-            features = features_from_profile(person, profile, [])
-            ranked, _trace = rank_organic_feed(features, catalog, PipelineConfig(final_k=12))
-            if not ranked:
-                continue
-            picks = ranked[: min(6, len(ranked))]
-            for step in range(events_per_user):
-                item = picks[step % len(picks)]
-                video = by_id[item.video.id]
-                roll = rng.random()
-                context: dict = {}
-                if roll < 0.10:
-                    event_type = "skip"
-                    watch_ms = rng.randint(400, 1800)
-                elif roll < 0.48:
-                    event_type = "complete"
-                    watch_ms = video.duration_ms
-                elif roll < 0.60:
-                    event_type = "like"
-                    watch_ms = int(video.duration_ms * 0.9)
-                elif roll < 0.68:
-                    event_type = "comment"
-                    watch_ms = int(video.duration_ms * 0.7)
-                elif roll < 0.76:
-                    event_type = "share"
-                    watch_ms = int(video.duration_ms * 0.6)
-                elif roll < 0.82:
-                    event_type = "follow"
-                    watch_ms = 2000
-                elif roll < 0.88:
-                    event_type = "hashtag_tap"
-                    watch_ms = 1500
-                    tags = [tag for tag in (video.tags or []) if tag != "seed"]
-                    context = {"hashtag": tags[0] if tags else video.category}
-                else:
-                    event_type = "heartbeat"
-                    watch_ms = rng.randint(3000, video.duration_ms)
-                event = {
-                    "user_id": person.id,
-                    "session_id": f"sim-{person.id}-{_day}",
-                    "video_id": video.id,
-                    "event_type": event_type,
-                    "ts": datetime.now(timezone.utc),
-                    "watch_ms": watch_ms,
-                    "duration_ms": video.duration_ms,
-                    "completion_ratio": watch_ms / max(video.duration_ms, 1),
-                    "loop_count": 1 if event_type == "replay" else 0,
-                    "feed_position": step,
-                    "is_ad": False,
-                    "campaign_id": None,
-                    "simulated": True,
-                    "context": context,
-                }
-                await mongo.events.insert_one(event)
-                profile = apply_event(
-                    profile,
-                    event,
-                    video.embedding,
-                    video.category,
-                    video.audio_id,
-                    list(video.tags or []),
-                )
-                written += 1
-        await mongo.user_profiles_online.update_one(
-            {"user_id": person.id}, {"$set": profile}, upsert=True
+    by_video = {video.id: video for video in videos}
+    profiles: dict[str, dict] = {}
+    for event in events:
+        user_id = event["user_id"]
+        if user_id not in profiles:
+            profile_doc = await mongo.user_profiles_online.find_one({"user_id": user_id})
+            profiles[user_id] = profile_doc or empty_profile(user_id)
+        video = by_video.get(event["video_id"])
+        if video is None:
+            continue
+        profiles[user_id] = apply_event(
+            profiles[user_id],
+            event,
+            list(video.embedding or []),
+            video.category,
+            video.audio_id,
+            list(video.tags or []),
         )
+    for user_id, profile in profiles.items():
+        await mongo.user_profiles_online.update_one({"user_id": user_id}, {"$set": profile}, upsert=True)
 
-    return {"events": written, "users": len(sample), "days": days}
+    regions = {event["user_region"] for event in events if event.get("user_region")}
+    regions.update(event["video_region"] for event in events if event.get("video_region"))
+    return {
+        "events": len(events),
+        "users": len({event["user_id"] for event in events}),
+        "days": days,
+        "regions": len(regions),
+        "pass_id": pass_id,
+    }

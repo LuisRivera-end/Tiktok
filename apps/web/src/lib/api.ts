@@ -80,6 +80,37 @@ export type FeedResponse = {
   new_user: boolean;
 };
 
+export type RegionMetric = {
+  region: string;
+  events: number;
+  views: number;
+  completion_rate: number;
+  retention_minutes: number;
+};
+
+export type CategoryMetric = {
+  category: string;
+  events: number;
+  views: number;
+  completion_rate: number;
+  retention_minutes: number;
+};
+
+export type EventTypeMetric = {
+  event_type: string;
+  events: number;
+};
+
+export type DashboardFocus = {
+  region: string;
+  category: string;
+  events: number;
+  views: number;
+  completion_rate: number;
+  retention_minutes: number;
+  early_abandon_rate: number;
+};
+
 export type Metrics = {
   retention_minutes: number;
   completion_rate: number;
@@ -88,6 +119,11 @@ export type Metrics = {
   diversity_index: number;
   ad_fill_rate: number;
   events: number;
+  views: number;
+  window_days: number;
+  truncated: boolean;
+  available_regions: string[];
+  available_categories: string[];
   active_users?: number;
   comments?: number;
   shares?: number;
@@ -95,6 +131,11 @@ export type Metrics = {
   hashtag_taps?: number;
   comment_opens?: number;
   share_opens?: number;
+  regions?: RegionMetric[];
+  categories?: CategoryMetric[];
+  event_types?: EventTypeMetric[];
+  focus?: DashboardFocus | null;
+  selected?: RegionMetric | null;
 };
 
 export type CommentRow = {

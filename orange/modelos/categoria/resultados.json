@@ -1,0 +1,127 @@
+{
+  "task": "categoria",
+  "target": "complete_response = 1 for complete, 0 for skip",
+  "features_categorical": [
+    "user_role",
+    "user_region",
+    "category"
+  ],
+  "features_numeric": [
+    "prior_category_rate",
+    "prior_category_count",
+    "prior_overall_rate",
+    "prior_overall_count"
+  ],
+  "excluded_from_features": [
+    "event_type",
+    "watch_ms",
+    "completion_ratio",
+    "early_skip",
+    "user_id",
+    "video_id",
+    "session_id",
+    "campaign_id",
+    "pass_id"
+  ],
+  "rows": 1800,
+  "train_rows": 1411,
+  "test_rows": 389,
+  "train_users": 64,
+  "test_users": 16,
+  "selected_by": "largest 4-fold user-grouped training CV AUC ROC",
+  "selected_model": "Random Forest",
+  "evaluations": {
+    "Logistic Regression": {
+      "grouped_train_cv": {
+        "n": 1411,
+        "positive_rate": 0.66194188518781,
+        "accuracy": 0.7016300496102055,
+        "balanced_accuracy": 0.6079372775061838,
+        "f1_complete": 0.7992370052455889,
+        "brier": 0.19908479525275222,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            152,
+            325
+          ],
+          [
+            96,
+            838
+          ]
+        ],
+        "auc_roc": 0.6946105432328211,
+        "average_precision": 0.7929592363947097
+      },
+      "held_out_users": {
+        "n": 389,
+        "positive_rate": 0.6555269922879178,
+        "accuracy": 0.7095115681233933,
+        "balanced_accuracy": 0.6279338601112087,
+        "f1_complete": 0.800705467372134,
+        "brier": 0.1961808728416014,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            49,
+            85
+          ],
+          [
+            28,
+            227
+          ]
+        ],
+        "auc_roc": 0.6984050336552532,
+        "average_precision": 0.780405335503713
+      }
+    },
+    "Random Forest": {
+      "grouped_train_cv": {
+        "n": 1411,
+        "positive_rate": 0.66194188518781,
+        "accuracy": 0.7172218284904324,
+        "balanced_accuracy": 0.6499748607239214,
+        "f1_complete": 0.800599700149925,
+        "brier": 0.19002267810519824,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            211,
+            266
+          ],
+          [
+            133,
+            801
+          ]
+        ],
+        "auc_roc": 0.7329075368447515,
+        "average_precision": 0.8197427501525618
+      },
+      "held_out_users": {
+        "n": 389,
+        "positive_rate": 0.6555269922879178,
+        "accuracy": 0.7146529562982005,
+        "balanced_accuracy": 0.6531021363769388,
+        "f1_complete": 0.7963302752293578,
+        "brier": 0.19632767612179958,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            61,
+            73
+          ],
+          [
+            38,
+            217
+          ]
+        ],
+        "auc_roc": 0.7274070822358795,
+        "average_precision": 0.8002932513992509
+      }
+    }
+  },
+  "majority_accuracy_test": 0.6555269922879178,
+  "paths": {
+    "all.tab": "E:\\Tiktok\\orange\\modelos\\categoria\\all.tab",
+    "train.tab": "E:\\Tiktok\\orange\\modelos\\categoria\\train.tab",
+    "test.tab": "E:\\Tiktok\\orange\\modelos\\categoria\\test.tab",
+    "model.pkcls": "E:\\Tiktok\\orange\\modelos\\categoria\\model.pkcls",
+    "flujo.ows": "E:\\Tiktok\\orange\\modelos\\categoria\\flujo.ows"
+  }
+}

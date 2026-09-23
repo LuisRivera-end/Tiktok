@@ -99,3 +99,21 @@ def test_diversity_avoids_same_audio_in_a_row():
         same_creator = left.video.creator_id == right.video.creator_id
         if same_audio or same_creator:
             assert "diversity_fallback" in right.reasons
+
+
+def test_ineligible_and_duplicate_clips_do_not_consume_retrieval_quota():
+    inactive = [_video(i, "comedia", f"dead-{i}", f"dead-a{i}", 1000 - i) for i in range(5)]
+    for video in inactive:
+        video.status = "inactive"
+    active = [_video(i + 10, "ciencia", f"live-{i}", f"live-a{i}", 100 - i) for i in range(5)]
+    duplicate = _video(99, "ciencia", "duplicate", "duplicate-a", 90)
+    duplicate.content_hash = active[0].content_hash
+    user = UserFeatures(user_id="viewer", interest_vector=[], topic_affinity={}, audio_affinity={}, is_new=True)
+    ranked, trace = rank_organic_feed(
+        user, [*inactive, *active, duplicate], PipelineConfig(final_k=4, source_total=5, rank_keep=5)
+    )
+    assert len(ranked) == 4
+    assert trace["recycled"] == 0
+    assert len({row.video.content_hash for row in ranked}) == 4
+    assert any(reason == "inactive" for _, reason in trace["dropped"])
+    assert (duplicate.id, "duplicate") in trace["dropped"]

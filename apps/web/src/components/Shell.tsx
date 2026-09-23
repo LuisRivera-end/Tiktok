@@ -41,6 +41,11 @@ export function Shell() {
   const [more, setMore] = useState(false);
   const [following, setFollowing] = useState<Array<{ id: string; display_name: string }>>([]);
   const value = useMemo(() => ({ landscape, setLandscape }), [landscape]);
+  const edgeToEdge =
+    location.pathname === "/" ||
+    location.pathname === "/siguiendo" ||
+    location.pathname === "/amigos" ||
+    location.pathname.startsWith("/clip/");
   const aside = useRef<HTMLElement>(null);
   const moreBox = useRef<HTMLDivElement>(null);
 
@@ -80,8 +85,8 @@ export function Shell() {
 
   return (
     <FrameContext.Provider value={value}>
-      <div className="h-dvh overflow-hidden bg-void text-paper xl:grid xl:grid-cols-[240px_minmax(0,1fr)]">
-        <aside ref={aside} className="hidden h-full flex-col border-r border-line bg-void px-3 py-4 xl:flex">
+      <div className="h-dvh overflow-hidden bg-void text-paper xl:grid xl:grid-cols-[240px_minmax(0,1fr)] xl:grid-rows-[minmax(0,1fr)]">
+        <aside ref={aside} className="hidden h-full min-h-0 flex-col overflow-y-auto border-r border-line bg-void px-3 py-4 xl:flex">
           <p data-side-item className="px-3 font-display text-3xl font-extrabold tracking-tight">
             Veta
           </p>
@@ -148,8 +153,8 @@ export function Shell() {
           {user && <p className="mt-auto px-3 pt-4 text-xs text-paper/40">{user.display_name}</p>}
         </aside>
 
-        <div className="relative h-full min-w-0">
-          <div className="h-full overflow-y-auto pb-14 xl:pb-0">
+        <div className="relative h-full min-h-0 min-w-0">
+          <div className={cn("h-full overflow-y-auto", edgeToEdge ? "pb-0" : "pb-14 xl:pb-0")}>
             <MotionPage>
               <Outlet />
             </MotionPage>

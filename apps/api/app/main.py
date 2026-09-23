@@ -8,7 +8,7 @@ from app.config import settings
 from app.db import Base, SessionLocal, engine
 from app.mongo import close_mongo, ensure_indexes
 from app.routers import auth, campaigns, events, feed, lab, media, social, videos
-from app.seed import seed_if_empty, seed_social_if_empty
+from app.seed import inject_corpus_if_needed, seed_if_empty, seed_social_if_empty
 
 
 @asynccontextmanager
@@ -17,6 +17,8 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
         await conn.execute(text("ALTER TABLE videos ADD COLUMN IF NOT EXISTS width INTEGER DEFAULT 1080"))
         await conn.execute(text("ALTER TABLE videos ADD COLUMN IF NOT EXISTS height INTEGER DEFAULT 1920"))
+        await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS region VARCHAR(40) DEFAULT ''"))
+        await conn.execute(text("ALTER TABLE videos ADD COLUMN IF NOT EXISTS region VARCHAR(40) DEFAULT ''"))
     try:
         await ensure_indexes()
     except Exception:
@@ -26,6 +28,7 @@ async def lifespan(app: FastAPI):
         async with SessionLocal() as session:
             await seed_if_empty(session)
             await seed_social_if_empty(session)
+            await inject_corpus_if_needed(session)
     yield
     await engine.dispose()
     await close_mongo()

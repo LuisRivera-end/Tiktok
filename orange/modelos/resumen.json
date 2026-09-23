@@ -1,0 +1,325 @@
+{
+  "source": "C:\\Users\\lelie\\Downloads\\veta_interactions.csv",
+  "source_sha256": "d30631ddf9c4355800874ae117ef9b2e9459d9d48f8caff8ca0ad4017474b848",
+  "raw_rows": 12271,
+  "raw_exact_duplicate_rows": 5040,
+  "source_has_timestamp": false,
+  "source_has_feed_position": false,
+  "organic_preparation": {
+    "eligible_simulated_terminal_rows_before_collapse": 4874,
+    "after_indistinguishable_row_collapse": 2308,
+    "target_rows_days_1_to_4": 1800,
+    "users": 80,
+    "history_rule": "For day d, only simulated organic complete/skip rows from days < d"
+  },
+  "advertising_preparation": {
+    "ad_terminal_rows_before_collapse": 81,
+    "ad_terminal_rows": 61,
+    "ad_users": 36,
+    "ad_videos": 1,
+    "ad_campaigns": 1,
+    "ad_impressions": 77
+  },
+  "results": {
+    "categoria": {
+      "task": "categoria",
+      "target": "complete_response = 1 for complete, 0 for skip",
+      "features_categorical": [
+        "user_role",
+        "user_region",
+        "category"
+      ],
+      "features_numeric": [
+        "prior_category_rate",
+        "prior_category_count",
+        "prior_overall_rate",
+        "prior_overall_count"
+      ],
+      "excluded_from_features": [
+        "event_type",
+        "watch_ms",
+        "completion_ratio",
+        "early_skip",
+        "user_id",
+        "video_id",
+        "session_id",
+        "campaign_id",
+        "pass_id"
+      ],
+      "rows": 1800,
+      "train_rows": 1411,
+      "test_rows": 389,
+      "train_users": 64,
+      "test_users": 16,
+      "selected_by": "largest 4-fold user-grouped training CV AUC ROC",
+      "selected_model": "Random Forest",
+      "evaluations": {
+        "Logistic Regression": {
+          "grouped_train_cv": {
+            "n": 1411,
+            "positive_rate": 0.66194188518781,
+            "accuracy": 0.7016300496102055,
+            "balanced_accuracy": 0.6079372775061838,
+            "f1_complete": 0.7992370052455889,
+            "brier": 0.19908479525275222,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                152,
+                325
+              ],
+              [
+                96,
+                838
+              ]
+            ],
+            "auc_roc": 0.6946105432328211,
+            "average_precision": 0.7929592363947097
+          },
+          "held_out_users": {
+            "n": 389,
+            "positive_rate": 0.6555269922879178,
+            "accuracy": 0.7095115681233933,
+            "balanced_accuracy": 0.6279338601112087,
+            "f1_complete": 0.800705467372134,
+            "brier": 0.1961808728416014,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                49,
+                85
+              ],
+              [
+                28,
+                227
+              ]
+            ],
+            "auc_roc": 0.6984050336552532,
+            "average_precision": 0.780405335503713
+          }
+        },
+        "Random Forest": {
+          "grouped_train_cv": {
+            "n": 1411,
+            "positive_rate": 0.66194188518781,
+            "accuracy": 0.7172218284904324,
+            "balanced_accuracy": 0.6499748607239214,
+            "f1_complete": 0.800599700149925,
+            "brier": 0.19002267810519824,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                211,
+                266
+              ],
+              [
+                133,
+                801
+              ]
+            ],
+            "auc_roc": 0.7329075368447515,
+            "average_precision": 0.8197427501525618
+          },
+          "held_out_users": {
+            "n": 389,
+            "positive_rate": 0.6555269922879178,
+            "accuracy": 0.7146529562982005,
+            "balanced_accuracy": 0.6531021363769388,
+            "f1_complete": 0.7963302752293578,
+            "brier": 0.19632767612179958,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                61,
+                73
+              ],
+              [
+                38,
+                217
+              ]
+            ],
+            "auc_roc": 0.7274070822358795,
+            "average_precision": 0.8002932513992509
+          }
+        }
+      },
+      "majority_accuracy_test": 0.6555269922879178,
+      "paths": {
+        "all.tab": "E:\\Tiktok\\orange\\modelos\\categoria\\all.tab",
+        "train.tab": "E:\\Tiktok\\orange\\modelos\\categoria\\train.tab",
+        "test.tab": "E:\\Tiktok\\orange\\modelos\\categoria\\test.tab",
+        "model.pkcls": "E:\\Tiktok\\orange\\modelos\\categoria\\model.pkcls",
+        "flujo.ows": "E:\\Tiktok\\orange\\modelos\\categoria\\flujo.ows"
+      }
+    },
+    "video": {
+      "task": "video",
+      "target": "complete_response = 1 for complete, 0 for skip",
+      "features_categorical": [
+        "user_role",
+        "user_region",
+        "video_region",
+        "category",
+        "audio_id",
+        "tags"
+      ],
+      "features_numeric": [
+        "prior_category_rate",
+        "prior_category_count",
+        "prior_overall_rate",
+        "prior_overall_count",
+        "prior_region_rate",
+        "prior_region_count",
+        "duration_s",
+        "same_region"
+      ],
+      "excluded_from_features": [
+        "event_type",
+        "watch_ms",
+        "completion_ratio",
+        "early_skip",
+        "user_id",
+        "video_id",
+        "session_id",
+        "campaign_id",
+        "pass_id"
+      ],
+      "rows": 1800,
+      "train_rows": 1411,
+      "test_rows": 389,
+      "train_users": 64,
+      "test_users": 16,
+      "selected_by": "largest 4-fold user-grouped training CV AUC ROC",
+      "selected_model": "Random Forest",
+      "evaluations": {
+        "Logistic Regression": {
+          "grouped_train_cv": {
+            "n": 1411,
+            "positive_rate": 0.66194188518781,
+            "accuracy": 0.9036144578313253,
+            "balanced_accuracy": 0.8697516149740303,
+            "f1_complete": 0.9304703476482618,
+            "brier": 0.0716006357958306,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                365,
+                112
+              ],
+              [
+                24,
+                910
+              ]
+            ],
+            "auc_roc": 0.9532263567353059,
+            "average_precision": 0.9692557638706336
+          },
+          "held_out_users": {
+            "n": 389,
+            "positive_rate": 0.6555269922879178,
+            "accuracy": 0.9023136246786633,
+            "balanced_accuracy": 0.8865378987415862,
+            "f1_complete": 0.9263565891472868,
+            "brier": 0.07137404848216107,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                112,
+                22
+              ],
+              [
+                16,
+                239
+              ]
+            ],
+            "auc_roc": 0.9649546385718466,
+            "average_precision": 0.9827512403263606
+          }
+        },
+        "Random Forest": {
+          "grouped_train_cv": {
+            "n": 1411,
+            "positive_rate": 0.66194188518781,
+            "accuracy": 0.920623671155209,
+            "balanced_accuracy": 0.8943959615548642,
+            "f1_complete": 0.9420889348500517,
+            "brier": 0.06107990720264008,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                388,
+                89
+              ],
+              [
+                23,
+                911
+              ]
+            ],
+            "auc_roc": 0.9681898374476452,
+            "average_precision": 0.9822291377184971
+          },
+          "held_out_users": {
+            "n": 389,
+            "positive_rate": 0.6555269922879178,
+            "accuracy": 0.9125964010282777,
+            "balanced_accuracy": 0.8943810359964881,
+            "f1_complete": 0.9346153846153846,
+            "brier": 0.06115816395315625,
+            "confusion_matrix_0_skip_1_complete": [
+              [
+                112,
+                22
+              ],
+              [
+                12,
+                243
+              ]
+            ],
+            "auc_roc": 0.9787825577992392,
+            "average_precision": 0.9899287820480711
+          }
+        }
+      },
+      "majority_accuracy_test": 0.6555269922879178,
+      "paths": {
+        "all.tab": "E:\\Tiktok\\orange\\modelos\\video\\all.tab",
+        "train.tab": "E:\\Tiktok\\orange\\modelos\\video\\train.tab",
+        "test.tab": "E:\\Tiktok\\orange\\modelos\\video\\test.tab",
+        "model.pkcls": "E:\\Tiktok\\orange\\modelos\\video\\model.pkcls",
+        "flujo.ows": "E:\\Tiktok\\orange\\modelos\\video\\flujo.ows"
+      },
+      "same_region_rule_test": {
+        "n": 389,
+        "positive_rate": 0.6555269922879178,
+        "accuracy": 0.897172236503856,
+        "balanced_accuracy": 0.8719929762949956,
+        "f1_complete": 0.9239543726235742,
+        "brier": 0.10282776349614396,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            106,
+            28
+          ],
+          [
+            12,
+            243
+          ]
+        ],
+        "auc_roc": 0.8719929762949956,
+        "average_precision": 0.8853306385778208
+      }
+    },
+    "publicidad": {
+      "ad_terminal_rows_before_collapse": 81,
+      "ad_terminal_rows": 61,
+      "ad_users": 36,
+      "ad_videos": 1,
+      "ad_campaigns": 1,
+      "ad_impressions": 77,
+      "positive_users": 2,
+      "complete_rows": 17,
+      "skip_rows": 44,
+      "affinity_formula": "0.7 * smoothed organic category completion rate + 0.3 * smoothed organic overall completion rate",
+      "status": "exploratory affinity rule only; no validated ad response model or multi-campaign ranking",
+      "limitation": "CSV has no timestamps, so the organic profile cannot be proven to predate each ad impression.",
+      "paths": {
+        "flow": "E:\\Tiktok\\orange\\modelos\\publicidad\\flujo.ows",
+        "data": "E:\\Tiktok\\orange\\modelos\\publicidad\\afinidad.tab"
+      }
+    }
+  },
+  "interpretation": "Candidate completion propensity on observed exposures; not observed next-item prediction or causal ranking lift."
+}

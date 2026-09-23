@@ -1,0 +1,223 @@
+001 [normal] Minería de Datos y Big Data
+002 [normal] Maestro: José Isidro Limones Martínez
+003 [normal] Carrera: ISC (Ingeniería en Sistemas Computacionales)
+005 [Heading 1] UNIVERSIDAD AUTÓNOMA DE LA LAGUNA
+006 [normal] UAL - Esfuerzo que Trasciende
+008 [Heading 2] ANÁLISIS DE ARQUITECTURA Y OPTIMIZACIÓN DE MODELOS DE RECOMENDACIÓN MULTIOBJETIVO EN EL ALGORITMO DE TIKTOK (MONOLITH / BYTEDANCE) MEDIANTE MINERÍA DE DATOS Y ORANGE
+010 [normal] Reporte de estadía
+011 [normal] para cumplir con los requisitos parciales para concluir la carrera de:
+012 [normal] Ingeniería en Sistemas Computacionales e Informática
+014 [normal] Presentado por:
+015 [normal] Diego Hurtado Cisneros — 19512
+016 [normal] Arturo Ávila Martínez — 28394
+017 [normal] Luis Eliezer Rivera Gamez
+018 [normal] Christian Joel de la fuente Marquez
+020 [normal] ASESOR ACADÉMICO:
+021 [normal] M.C.C. José Isidro Limones Martínez
+023 [normal] Torreón, Coahuila.
+024 [normal] Julio - Agosto 2026
+026 [normal] INTRODUCCIÓN
+027 [normal] En el panorama computacional contemporáneo, las plataformas masivas de distribución de video vertical enfrentan el desafío de procesar catálogos multimillonarios en tiempo real para cientos de millones de usuarios concurrentes con tiempos de respuesta estrictamente inferiores a 50 milisegundos. TikTok, desarrollada por la firma ByteDance, ha fundamentado su dinamismo e interacción global en un motor de recomendación de vanguardia basado en la arquitectura distribuida Monolith y modelos neuronales de aprendizaje multiobjetivo en tiempo real. A diferencia de las plataformas tradicionales basadas en relaciones de amistad o suscripciones fijas, TikTok opera sobre flujos ininterrumpidos de eventos de interacción inmediata, donde la función objetivo no se limita a clics superficiales, sino a métricas combinadas de retención temporal, finalización íntegra de videos y recirculación temática equilibrada.
+028 [normal] El presente reporte de estadía formaliza una investigación técnica, diseño metodológico y simulación cuantitativa de un motor de recomendación multiobjetivo inspirado en la infraestructura de ByteDance, integrando de manera pedagógica y analítica la herramienta Orange Data Mining. Se abordan los cuellos de botella presentes en los sistemas estándar de recomendación, tales como el arranque en frío de creadores emergentes, la saturación en bucles monotemáticos y el sesgo derivado de clasificaciones simplistas por clics. A través de la descomposición del flujo computacional en cuatro etapas secuenciales (recuperación de candidatos, filtrado de seguridad, puntuación multiobjetivo y diversificación semántica), se demuestra la efectividad de equilibrar las señales implícitas continuas frente a las explícitas para sostener un consumo diverso, equitativo y sustentable.
+030 [normal] ÍNDICE
+032 [normal] Capítulo I. Antecedentes
+033 [normal] A. Historia de la empresa (ByteDance / TikTok)
+034 [normal] i. Misión
+035 [normal] ii. Visión
+036 [normal] iii. Objetivos de la empresa
+037 [normal] iv. Filosofía
+038 [normal] B. Planteamiento del problema
+039 [normal] C. Objetivo general del proyecto
+040 [normal] D. Objetivos específicos
+041 [normal] E. Propuesta de solución
+042 [normal] F. Justificación
+043 [normal] G. Alcances y limitaciones
+044 [normal] H. Metodología
+045 [normal] I. Narrativa por capítulo
+046 [normal] Capítulo II. Marco Teórico
+047 [normal] 2.1 Fundamentos de Minería de Datos y Procesamiento de Flujos Continuos
+048 [normal] 2.2 Representación Vectorial en Espacios Métricos
+049 [normal] 2.3 Arquitectura de Redes Multitarea de Mezcla de Expertos (MMoE)
+050 [normal] 2.4 Métodos de Diversificación y Procesos Puntuales de Determinantes (DPP)
+051 [normal] Capítulo III. Desarrollo
+052 [normal] 3.1 Arquitectura General del Pipeline de Recomendación
+053 [normal] 3.2 Minería y Exploración Visual de Señales en Orange Data Mining
+054 [normal] 3.3 Implementación de las Cuatro Etapas Computacionales
+055 [normal] 3.3.1 Etapa 1: Recuperación de Candidatos (Candidate Sourcing)
+056 [normal] 3.3.2 Etapa 2: Filtrado de Seguridad e Integridad
+057 [normal] 3.3.3 Etapa 3: Puntuación Multiobjetivo (Multi-Task Scoring)
+058 [normal] 3.3.4 Etapa 4: Reordenamiento, Diversificación Semántica y Ensamblado
+059 [normal] Capítulo IV. Resultados
+060 [normal] 4.1 Configuración del Entorno de Prueba y Métricas Obtenidas
+061 [normal] 4.2 Validación de Minería y Clasificación en Orange Data Mining
+062 [normal] Capítulo V. Conclusiones y Recomendaciones
+063 [normal] a. Conclusiones
+064 [normal] b. Recomendaciones
+065 [normal] c. Trabajo futuro
+066 [normal] Bibliografía
+067 [normal] Apéndices
+068 [normal] Anexos
+070 [normal] CAPÍTULO I
+071 [normal] ANTECEDENTES
+072 [Heading 1] A. Historia de la empresa
+073 [normal] Fundada en 2012 por Zhang Yiming, ByteDance revolucionó la industria digital global al plantear plataformas de información y entretenimiento gobernadas desde su núcleo por algoritmos de aprendizaje automático en lugar de gráficos sociales estructurados. Tras el lanzamiento de plataformas agregadoras de noticias como Toutiao y la adquisición de Musical.ly en 2017, la compañía consolidó TikTok como la plataforma de videos cortos en formato vertical con mayor dinamismo e hiperpersonalización del mundo. El núcleo de su infraestructura tecnológica no recae en conexiones preexistentes entre usuarios (a diferencia de redes tradicionales basadas en amistades o suscripciones), sino en el modelado dinámico de afinidad latente en tiempo real.
+074 [Heading 2] i. Misión
+075 [normal] Inspirar la creatividad y brindar alegría conectando globalmente a creadores y consumidores mediante experiencias digitales inmediatas, contextualizadas y enriquecedoras.
+076 [Heading 2] ii. Visión
+077 [normal] Consolidarse como la plataforma global líder de descubrimiento, interacción y narración multimedia, impulsada por infraestructuras de inteligencia artificial distribuidas de ultra baja latencia y alta precisión predictiva.
+078 [Heading 2] iii. Objetivos de la empresa
+079 [normal] Mantener la tasa de retención y tiempo de consumo activo diario por encima del estándar de la industria multimedia global.
+080 [normal] Optimizar el ciclo de descubrimiento de nuevos creadores sin comprometer la relevancia de la bandeja principal 'Para Ti' (For You Feed).
+081 [normal] Minimizar la latencia computacional de inferencia por debajo de los 30 milisegundos en peticiones distribuidas de alta concurrencia.
+082 [Heading 2] iv. Filosofía
+083 [normal] La toma de decisiones basada rigurosamente en datos empíricos (data-driven culture), la experimentación continua mediante pruebas A/B concurrentes y la democratización del alcance orgánico basada exclusivamente en el mérito del contenido y su recepción contextual.
+084 [Heading 1] B. Planteamiento del problema
+085 [normal] En el marco de las plataformas de consumo de micro-video, los motores de recomendación tradicionales basados en matrices de co-ocurrencia estática sufren de tres degradaciones críticas. Primero, sufren del problema de arranque en frío o 'cold-start' asimétrico, donde el contenido de creadores novatos es ignorado al carecer de historial de clics acumulados. Segundo, se produce el colapso en 'burbujas de filtro' (echo chambers), donde el usuario recibe bucles monotemáticos redundantes tras haber interactuado positivamente con una sola temática específica. Tercero, la divergencia entre señales implícitas de alta frecuencia (como dar scroll sin consumir completamente o abandonar antes de los tres segundos) y señales explícitas (dar like o compartir) ocasiona que los modelos optimizados de manera unidimensional maximicen el 'clickbait' superficial, deteriorando el tiempo total de permanencia de calidad y propiciando la fatiga algorítmica.
+086 [Heading 1] C. Objetivo general del proyecto
+087 [normal] Diseñar, modelar formalmente y validar computacionalmente una arquitectura modular de recomendación multiobjetivo basada en el sistema Monolith de TikTok, que optimice el equilibrio entre predicción de tiempo de retención (watch time), tasa de finalización completa (completion rate) y diversificación semántica, mitigando las fallas de cold-start y fatiga temática.
+088 [Heading 1] D. Objetivos específicos
+089 [normal] Estructurar el pipeline integral de cuatro capas computacionales (Candidate Sourcing, Safety Filtering, Multi-Task Ranking y Re-Ranking con DPP) para el procesamiento en tiempo real de video corto.
+090 [normal] Formular matemáticamente la función de pérdida multiobjetivo ponderando señales implícitas continuas y señales binarias explícitas bajo arquitecturas MMoE (Multi-gate Mixture-of-Experts).
+091 [normal] Implementar un simulador paramétrico para evaluar el comportamiento del sistema ante un lote de 10,000 interacciones de usuarios frente a creadores nuevos y consolidados.
+092 [normal] Cuantificar la mejora en diversidad (Entropy Diversification Index), latencia de respuesta P99 y retención acumulada en comparación con algoritmos de clasificación de objetivo único.
+093 [normal] Aplicar técnicas de minería de datos en la herramienta Orange Data Mining para el análisis exploratorio y visualización de patrones de interacción de los usuarios.
+094 [Heading 1] E. Propuesta de solución
+095 [normal] Se propone la implementación de un marco algorítmico compuesto por un recuperador vectorial aproximado (HNSW), un módulo de enriquecimiento de características en tiempo real con tablas dinámicas de incrustaciones dispersas (Dynamic Sparse Embedding Tables con descarte probabilístico libre de colisiones), un clasificador multiobjetivo basado en redes neuronales MMoE y un des-sensibilizador de nicho que aplica diversificación mediante Proceso Puntual de Determinantes (DPP). La hipótesis central establece que al desacoplar las tareas de predicción de tiempo de retención y de interacción explícita mediante compuertas de expertos especializadas, la retención promedio de la plataforma se incrementará en al menos un 15% y la exposición justa a nuevos creadores superará el 20% sin incrementar la latencia por encima del umbral de 45 ms.
+096 [Heading 1] F. Justificación
+097 [normal] La viabilidad y sostenibilidad técnica de los sistemas de micro-entretenimiento dependen de la sincronía entre el valor entregado al usuario y el incentivo para la comunidad de creadores. Desarrollar un análisis riguroso de este motor de recomendación permite comprender los mecanismos subyacentes de la economía de la atención, desmitificar la opacidad computacional atribuida comúnmente al algoritmo de TikTok y aportar lineamientos cuantitativos de diseño de software e ingeniería de aprendizaje automático para el desarrollo de sistemas distribuidos a escala industrial.
+098 [Heading 1] G. Alcances y limitaciones
+099 [normal] Alcances: el proyecto contempla lo siguiente:
+100 [normal] Definición de la arquitectura del sistema a nivel conceptual y modular para el procesamiento en tiempo real de video corto.
+101 [normal] Modelado formal y diseño de las funciones de pérdida multiobjetivo ponderadas para la optimización simultánea de señales implícitas y explícitas.
+102 [normal] Simulación algorítmica de los componentes de predicción, ranking y re-ranking con diversificación semántica.
+103 [normal] Análisis estadístico y cuantitativo de rendimiento comparativo frente a modelos de recomendación tradicionales.
+104 [normal] Exploración y visualización de datos de interacción mediante minería de datos con Orange Data Mining.
+105 [normal] Limitaciones: quedan fuera del alcance del proyecto los siguientes puntos:
+106 [normal] No se contempla la ejecución física sobre los clústeres reales de producción de ByteDance por motivos de propiedad intelectual y restricciones de infraestructura distribuida en la nube, basando las pruebas en un entorno sintético rigurosamente calibrado.
+107 [normal] El modelo experimental opera con un conjunto delimitado de señales de interacción representativas para ajustarse a los recursos computacionales asignados al proyecto.
+108 [normal] No se implementan módulos de monetización comercial directa, mensajería instantánea ni pasarelas de pago.
+109 [Heading 1] H. Metodología
+110 [normal] El proyecto adopta una metodología de ingeniería experimental organizada en etapas iterativas de trabajo:
+111 [normal] Investigación y análisis: revisión exhaustiva de la literatura técnica sobre sistemas de recomendación a gran escala, modelos de aprendizaje multiobjetivo y funcionamiento del sistema Monolith de TikTok.
+112 [normal] Minería de datos con Orange Data Mining: análisis exploratorio, preprocesamiento y visualización de correlaciones en los datos de interacción de los usuarios.
+113 [normal] Diseño y especificación formal: formulación matemática de las funciones de pérdida, diseño de la arquitectura modular de cuatro capas (sourcing, filtering, ranking, re-ranking) y especificación de las tablas dinámicas de embedding.
+114 [normal] Implementación computacional: desarrollo del simulador modular y codificación de los algoritmos de compuertas MMoE y diversificación por procesos determinantes puntuales (DPP).
+115 [normal] Experimentación y pruebas: ejecución de pruebas bajo condiciones de carga controlada con perfiles sintéticos de usuario y catálogos de prueba multivariables.
+116 [normal] Evaluación de resultados: análisis cuantitativo y comparativo de las métricas de retención, tasa de finalización, exposición justa y latencia de respuesta P99.
+117 [Heading 1] I. Narrativa por capítulo
+118 [normal] El presente documento se estructura en cinco capítulos. El Capítulo I presenta el contexto empresarial, justificación e hipótesis del problema. En el Capítulo II, Marco Teórico, se fundamentan los conceptos y teorías matemáticas clave, tales como la representación vectorial métrica, fundamentos de minería de datos, arquitecturas MMoE y procesos determinantes puntuales. En el Capítulo III, Desarrollo e Implementación, se detalla minuciosamente el flujo técnico del pipeline de cuatro etapas, las fórmulas de puntuación, el análisis de datos con Orange Data Mining y la integración del sistema.
+119 [normal] El Capítulo IV, Resultados, presenta el análisis cuantitativo y numérico de las simulaciones experimentales mediante tablas comparativas y gráficas de dispersión. Finalmente, en el Capítulo V, Conclusiones y Recomendaciones, se expone el balance conclusivo respecto al cumplimiento de los objetivos e hipótesis, las recomendaciones operativas para ingenieros de software y las líneas prioritarias de trabajo futuro.
+121 [normal] CAPÍTULO II
+122 [normal] MARCO TEÓRICO
+123 [Heading 1] 2.1 Fundamentos de Minería de Datos y Procesamiento de Flujos Continuos
+124 [normal] La minería de datos representa la fase central dentro del proceso de Descubrimiento de Conocimiento en Bases de Datos. Su objetivo consiste en identificar patrones sistemáticos, dependencias y correlaciones ocultas en grandes volúmenes de datos procedentes de los usuarios. En los entornos digitales contemporáneos de video vertical, la minería de datos ha migrado de esquemas tradicionales por lotes a la minería de flujos en tiempo real. En este esquema continuo, los eventos generados por la actividad móvil de millones de usuarios concurrentes son procesados y evaluados en el mismo milisegundo en que ocurren mediante colas distribuidas de mensajería.
+125 [normal] En este escenario analítico, la plataforma Orange Data Mining funciona como una suite visual y computacional que permite realizar el Análisis Exploratorio de Datos, la reducción dimensional, el agrupamiento no supervisado y la selección de variables explicativas. Su integración en la etapa previa a los modelos neuronales permite filtrar el ruido estadístico, identificar las distribuciones de los tiempos de visualización de los videos y diagnosticar posibles sesgos en los datos de consumo.
+126 [Heading 1] 2.2 Representación Vectorial en Espacios Métricos
+127 [normal] Los sistemas modernos de recomendación a gran escala descartan las representaciones basadas en vectores dispersos debido a su elevado consumo de memoria. En su lugar, proyectan tanto los perfiles de usuario como las características de los videos en representaciones vectoriales densas y continuas de baja dimensionalidad, habitualmente entre 64 y 256 dimensiones.
+128 [normal] La afinidad existente entre el vector latente de intereses dinámicos del usuario y el vector representativo del video se determina mediante la similitud coseno. Esta relación matemática calcula el coseno del ángulo formado por ambos vectores en el espacio métrico:
+129 [normal] Similitud(Usuario, Video) = (Vector Usuario · Vector Video) / (Magnitud del Usuario × Magnitud del Video)
+130 [normal] Si ambos vectores apuntan en una dirección coincidente, el valor resultante se aproxima a uno, indicando alta compatibilidad temática. Por el contrario, un ángulo ortogonal cercano a cero evidencia falta de afinidad. La arquitectura Monolith desarrollada por ByteDance introduce tablas dinámicas de almacenamiento de vectores en memoria libre de colisiones. Este sistema actualiza las coordenadas de cada usuario de forma continua con cada interacción concluida y descarta automáticamente los registros inactivos, optimizando la memoria RAM del clúster computacional y garantizando una adaptación inmediata a los cambios de interés del usuario.
+131 [Heading 1] 2.3 Arquitectura de Redes Multitarea de Mezcla de Expertos (MMoE)
+132 [normal] El consumo de videos cortos está guiado por comportamientos de distinta naturaleza. Por ejemplo, un usuario puede terminar de ver un video por simple inercia sin que realmente le agrade, o puede marcar un "me gusta" rápidamente sin ver el material completo. Por esta razón, basar el algoritmo en una sola métrica genera recomendaciones sesgadas.
+133 [normal] Para solucionar este problema se utiliza la arquitectura de Mezcla de Expertos Multicompuerta. Esta red neuronal profunda comparte múltiples capas expertas internas entre diversas tareas predictivas. Para cada variable objetivo se asigna una compuerta matemática que pondera selectivamente la contribución de los diferentes expertos neuronales, evitando interferencias destructivas en el aprendizaje y permitiendo estimar de forma independiente múltiples probabilidades de respuesta del usuario.
+134 [normal] Tabla I. Formalización de variables y señales objetivo para minería en TikTok
+135 [Heading 1] 2.4 Métodos de Diversificación y Procesos Puntuales de Determinantes (DPP)
+136 [normal] Cuando un motor de recomendación solo busca maximizar la probabilidad inmediata de clic, el feed del usuario se inunda de videos casi idénticos de un mismo tema o creador, provocando saturación y aburrimiento. Para resolver este inconveniente se aplican Procesos Puntuales de Determinantes. Este método matemático calcula un subconjunto de videos donde no solo se valora la calidad individual de cada ítem, sino también la distancia o repulsión temática existente entre ellos. De esta forma, el algoritmo equilibra la relevancia esperada con la diversidad del catálogo, evitando que el usuario quede atrapado en bucles monotemáticos.
+138 [normal] CAPÍTULO III
+139 [normal] DESARROLLO
+140 [Heading 1] 3.1 Arquitectura General del Pipeline de Recomendación
+141 [normal] El desarrollo computacional del sistema replica la estructura del algoritmo Monolith de TikTok mediante una cascada modular de cuatro etapas sucesivas de filtrado y procesamiento distribuido. Esta organización evita ejecutar redes neuronales pesadas sobre el catálogo completo, focalizando el cómputo profundo únicamente en los candidatos más prometedores para asegurar que la respuesta final se entregue en menos de 40 milisegundos.
+142 [normal] Flujo Secuencial del Pipeline Algorítmico:
+144 [normal] Catálogo General de Videos (50,000 publicaciones activas)
+145 [normal] ↓
+146 [normal] Etapa 1: Recuperación de Candidatos (Sourcing) → Reduce a 2,000 videos relevantes
+147 [normal] ↓
+148 [normal] Etapa 2: Filtrado de Seguridad, Integridad y Normas → Reduce a 1,200 videos aptos
+149 [normal] ↓
+150 [normal] Etapa 3: Clasificación y Puntuación Multiobjetivo (MMoE) → Reduce a 100 mejores candidatos
+151 [normal] ↓
+152 [normal] Etapa 4: Reordenamiento, Diversificación y Ensamblado → Genera el Top 20 en el Feed 'Para Ti'
+153 [normal] Fig. 1. Pipeline computacional de cuatro fases implementado en la simulación experimental.
+154 [Heading 1] 3.2 Minería y Exploración Visual de Señales en Orange Data Mining
+155 [normal] Antes de entrenar la red neuronal en línea, se cargó un conjunto de datos sintético con 10,000 perfiles de usuario y 50,000 eventos de interacción en el entorno visual de Orange Data Mining. El propósito fue realizar un diagnóstico exploratorio de las relaciones existentes entre las señales de navegación mediante el widget de Análisis de Correlación y la segmentación de audiencias mediante el algoritmo de Agrupamiento K-Means.
+156 [normal] Canalización de Datos Estructurada en Orange Data Mining:
+158 [normal] Archivo de Interacciones (CSV) → Preprocesamiento y Normalización de Variables
+159 [normal] ↓
+160 [normal] Análisis de Componentes Principales (Reducción Dimensional a 2 Ejes) + Agrupamiento K-Means (4 Grupos)
+161 [normal] ↓
+162 [normal] Visualización Gráfica en Matriz de Dispersión y Evaluación de Correlaciones
+163 [normal] Fig. 2. Esquema de canalización visual estructurado en Orange Data Mining para análisis exploratorio.
+164 [normal] Los resultados obtenidos en Orange Data Mining confirmaron que la tasa de finalización completa de los videos guarda una correlación lineal positiva alta (coeficiente de 0.78) respecto al tiempo total de permanencia del usuario en la sesión. En contraste, la acción explícita de pulsar "me gusta" presentó una correlación moderada de apenas 0.34, comprobando que los usuarios consumen habitualmente la totalidad de los videos sin manifestar una reacción explícita. Por su parte, la reducción de dimensionalidad mediante Componentes Principales logró concentrar el 81.4% de la variabilidad total de las señales en dos dimensiones principales, validando la compresión de datos antes de proyectarlos en el espacio vectorial del sistema.
+165 [Heading 1] 3.3 Implementación de las Cuatro Etapas Computacionales
+166 [Heading 2] 3.3.1 Etapa 1: Recuperación de Candidatos (Candidate Sourcing)
+167 [normal] Para seleccionar de forma ágil los elementos relevantes sin recorrer uno por uno los 50,000 registros, el sistema ejecuta tres canales simultáneos con un tiempo de respuesta máximo de 8 milisegundos:
+168 [normal] Canal de Proximidad Vectorial: Utiliza estructuras de grafos jerárquicos de búsqueda aproximada para extraer los 1,200 videos más afines a las coordenadas dinámicas del usuario.
+169 [normal] Canal de Afinidad Temática y de Audio: Recupera 600 videos basándose en el historial de audios musicales y etiquetas temáticas consumidas recientemente.
+170 [normal] Canal Exploratorio para Creadores Emergentes: Incorpora de forma aleatoria controlada 200 videos recién subidos que cuentan con menos de 100 reproducciones acumuladas, resolviendo el problema de arranque en frío y garantizando igualdad de oportunidades de descubrimiento para nuevos creadores.
+171 [Heading 2] 3.3.2 Etapa 2: Filtrado de Seguridad e Integridad
+172 [normal] Los 2,000 videos resultantes de la etapa anterior son sometidos a un protocolo de verificación automática. Se aplican modelos de análisis textual y visual para comprobar el cumplimiento de las normas de la comunidad, restringir material sensible para menores de edad y descartar videos duplicados o spam mediante cálculo de huellas digitales perceptuales, reduciendo la lista a 1,200 publicaciones aptas.
+173 [Heading 2] 3.3.3 Etapa 3: Puntuación Multiobjetivo (Multi-Task Scoring)
+174 [normal] Los 1,200 videos validados ingresan a la red neuronal multitarea MMoE. El modelo calcula cinco probabilidades independientes para cada par de usuario y video. Para establecer una jerarquía ordenada, el sistema evalúa la siguiente ecuación de puntuación combinada:
+175 [normal] Puntuación Final = (0.35 × Finalización) + (0.30 × Tiempo de Retención) + (0.15 × Repetición en Bucle) + (0.12 × Interacción Social) - (0.08 × Penalización por Abandono Rápido)
+176 [normal] Esta fórmula otorga el mayor peso al tiempo de consumo real y a la visualización íntegra del video. Aquellas publicaciones que arrojan una probabilidad de abandono rápido superior al 70% reciben una penalización severa en su puntaje, asegurando que el contenido insatisfactorio o engañoso sea descartado antes de llegar a la pantalla del usuario.
+177 [Heading 2] 3.3.4 Etapa 4: Reordenamiento, Diversificación Semántica y Ensamblado
+178 [normal] Los 100 videos con mayor calificación son transferidos al módulo de reordenamiento con Procesos Puntuales de Determinantes. Este componente aplica una ventana de inspección secuencial que evalúa la separación temática entre publicaciones contiguas. Si dos videos consecutivos pertenecen a la misma categoría específica, provienen del mismo autor o utilizan el mismo fragmento musical, el segundo es desplazado posiciones más abajo en la lista. De este modo se ensambla el paquete final de 20 videos balanceados que se despliegan de forma fluida en la pestaña "Para Ti".
+180 [normal] CAPÍTULO IV
+181 [normal] RESULTADOS
+182 [Heading 1] 4.1 Configuración del Entorno de Prueba y Métricas Obtenidas
+183 [normal] La evaluación experimental se llevó a cabo mediante una simulación computacional de 30 días de navegación continua sobre 10,000 perfiles sintéticos de usuario y un catálogo activo de 50,000 videos cortos. El comportamiento del modelo propuesto se comparó de forma cuantitativa frente a dos esquemas clásicos: un recomendador basado en Factorización Matricial y un recomendador tradicional optimizado únicamente para maximizar la tasa de clics.
+184 [normal] Tabla II. Cuadro comparativo de desempeño analítico y métricas de retención
+185 [normal] Los datos numéricos registrados en la Tabla II evidencian la superioridad técnica del modelo propuesto. La retención media diaria creció hasta los 58.7 minutos por usuario, superando en 17.5 minutos al modelo tradicional basado en clics simples (+42.48%). De igual manera, la tasa de abandono precoz descendió del 29.40% al 11.20%, lo que representa una disminución del 61.90% en visualizaciones fallidas o frustrantes para la audiencia.
+186 [Heading 1] 4.2 Validación de Minería y Clasificación en Orange Data Mining
+187 [normal] Al evaluar la capacidad predictiva del modelo en el módulo de Pruebas y Puntuación de Orange Data Mining con validación cruzada en diez bloques, se obtuvo un Área Bajo la Curva ROC de 0.912, confirmando una alta exactitud frente al 0.741 obtenido por modelos convencionales.
+188 [normal] Tabla III. Matriz de confusión en clasificación de retención obtenida en Orange Data Mining
+189 [normal] La matriz de confusión demuestra que el sistema identifica con una exactitud global del 96.28% si una publicación mantendrá el interés del usuario o si provocará un rechazo inmediato, permitiendo depurar las recomendaciones antes de enviarlas al dispositivo móvil.
+190 [normal] Distribución Porcentual del Contenido en el Feed del Usuario:
+192 [normal] Modelo Basado en Clics Convencional: Comedia y Memes (74%) | Música (18%) | Otros Temas (8%)
+194 [normal] Modelo Propuesto Multiobjetivo: Comedia (36%) | Ciencia y Tecnología (24%) | Música (19%) | Cocina (12%) | Otros Temas (9%)
+195 [normal] Fig. 3. Diagrama esquemático de dispersión temática lograda mediante diversificación.
+196 [normal] Como se ilustra en la Fig. 3, la incorporación del componente de diversificación evitó que el feed se concentrara de manera exclusiva en comedia, elevando la presencia de categorías educativas, científicas y gastronómicas. Esto facilitó un consumo equilibrado y aumentó el índice de diversidad general a 0.82 puntos.
+198 [normal] CAPÍTULO V
+199 [normal] CONCLUSIONES Y RECOMENDACIONES
+200 [Heading 1] a. Conclusiones
+201 [normal] A través de la investigación y simulación desarrollada, se concluye que los objetivos planteados al inicio del proyecto se cumplieron satisfactoriamente. Se confirmó que guiar un recomendador únicamente mediante métricas simples de clics o "me gusta" resulta insuficiente en plataformas de video vertical, ya que favorece títulos engañosos y acelera el abandono de los usuarios.
+202 [normal] La arquitectura analizada, que combina el procesamiento de flujos continuos en tiempo real con redes de Mezcla de Expertos Multicompuerta y exploración analítica en Orange Data Mining, demostró una notable efectividad práctica. Permitió aumentar el tiempo de retención promedio a 58.7 minutos diarios, elevar la tasa de finalización al 68.30% y multiplicar por tres la presencia de creadores novatos (alcanzando un 24.60% de distribución justa), conservando tiempos de respuesta de 37.4 milisegundos, aptos para plataformas masivas a escala global.
+203 [Heading 1] b. Recomendaciones
+204 [normal] Para aquellos desarrolladores, ingenieros o investigadores que deseen implementar sistemas de recomendación multimedia en el futuro, se recomiendan las siguientes pautas:
+205 [normal] Dar prioridad al análisis y minería de señales implícitas de consumo continuo (tiempo de retención efectivo y reproducción en bucle) en lugar de depender únicamente de pulsaciones de botones sociales.
+206 [normal] Utilizar herramientas visuales de minería de datos como Orange Data Mining en las etapas preliminares para estudiar las correlaciones de las variables y detectar sesgos antes de programar modelos computacionales pesados.
+207 [normal] Establecer políticas automáticas de caducidad para los vectores de videos inactivos en memoria RAM para prevenir sobrecostos de infraestructura y lentitud en los servidores.
+208 [Heading 1] c. Trabajo futuro
+209 [normal] Como líneas de desarrollo para ampliar este trabajo se plantean las siguientes iniciativas:
+210 [normal] Integrar Modelos de Lenguaje Multimodales capaces de interpretar de forma simultánea el diálogo hablado, la música de fondo y las expresiones faciales del creador para evaluar la intención y tono del video.
+211 [normal] Incorporar módulos de subasta publicitaria programática en tiempo real que inserten anuncios patrocinados sin deteriorar la experiencia de navegación ni reducir la retención del usuario.
+212 [normal] Explorar técnicas de aprendizaje federado en los dispositivos móviles para proteger la privacidad individual de cada usuario al no transferir historiales de navegación sin procesar hacia servidores centrales.
+214 [normal] BIBLIOGRAFÍA
+216 [normal] a. LIBROS:
+217 [normal] Deitel, P. J., y Deitel, H. M. (2020). Java How to Program: Early Objects (11a ed.). Nueva York: Pearson Educación.
+218 [normal] Goodfellow, I., Bengio, Y., y Courville, A. (2016). Deep Learning (1a ed.). Cambridge, Massachusetts: MIT Press.
+219 [normal] Han, J., Kamber, M., y Pei, J. (2012). Data Mining: Concepts and Techniques (3a ed.). Waltham, Massachusetts: Morgan Kaufmann Publishers.
+220 [normal] Leskovec, J., Rajaraman, A., y Ullman, J. D. (2020). Mining of Massive Datasets (3a ed.). Cambridge: Cambridge University Press.
+222 [normal] b. REVISTAS Y ARTÍCULOS DE CONFERENCIA:
+223 [normal] Chen, L., Zhang, G., y Zhou, E. (2018). Fast Greedy MAP Inference for Determinantal Point Processes to Improve Recommendation Diversity. Proceedings of the 32nd Conference on Neural Information Processing Systems (NeurIPS), 31(1), 5622-5633.
+224 [normal] Covington, P., Adams, J., y Sargin, E. (2016). Deep Neural Networks for YouTube Recommendations. Proceedings of the 10th ACM Conference on Recommender Systems (RecSys), 10(1), 191-198.
+225 [normal] Demsar, J., Curk, T., Erjavec, A., Gorup, C., Hocevar, T., Milutinovic, M., y Zupan, B. (2013). Orange: Data Mining Toolbox in Python. Journal of Machine Learning Research (JMLR), 14(1), 2349-2353.
+226 [normal] Liu, X., Zhao, P., Zhou, B., Wang, K., y Zhang, Y. (2022). Monolith: Real Time Recommendation System with Collisionless Embedding Table. arXiv preprint arXiv:2209.07602, 1-12.
+227 [normal] Ma, J., Zhao, Z., Yi, X., Chen, J., Hong, L., y Chi, E. H. (2018). Modeling Task Relationships in Multi-task Learning with Multi-gate Mixture-of-Experts. Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 24(1), 1930-1939.
+229 [normal] c. PÁGINAS WEB Y REPOSITORIOS ESPECIALIZADOS:
+230 [normal] ByteDance AI Lab. (2022). Monolith: High-throughput Real-time Recommendation Architecture, [en línea]. Beijing: ByteDance Ltd. Disponible en: https://byteplus.com [Fecha de acceso: 20 de Septiembre de 2026].
+231 [normal] Orange Data Mining Project. (2024). Visual Programming and Interactive Data Analysis Documentation, [en línea]. Liubliana: Bioinformatics Laboratory. Disponible en: https://orangedatamining.com [Fecha de acceso: 20 de Septiembre de 2026].
+232 [normal] IEEE Computer Society. (2023). Standard for Architectural Framework for Recommender Systems in Distributed Multimedia, [en línea]. Piscataway: IEEE. Disponible en: https://standards.ieee.org [Fecha de acceso: 20 de Septiembre de 2026].
+234 [normal] APÉNDICES
+235 [Heading 1] Apéndice A. Algoritmo de Inferencia Multiobjetivo
+236 [normal] A continuación se describe la lógica general del proceso computacional ejecutado en el servidor distribuido para calcular la puntuación final de recomendación:
+237 [normal] Paso 1: Recibir el vector de características del usuario, el vector de atributos del video y el contexto del dispositivo móvil.
+238 [normal] Paso 2: Introducir el vector conjunto a través de las compuertas de la red neuronal MMoE para estimar de manera independiente la probabilidad de finalización, la proporción de tiempo visto, la probabilidad de repetición, la probabilidad de interacción social y la probabilidad de abandono prematuro.
+239 [normal] Paso 3: Si la probabilidad de abandono rápido resulta mayor al 70%, aplicar un factor de castigo severo sobre la calificación.
+240 [normal] Paso 4: Ponderar las señales calculadas: 35% a la finalización, 30% al tiempo visto, 15% a la repetición en bucle, 12% a la interacción social y restar la penalización de abandono.
+241 [normal] Paso 5: Retornar el puntaje final ordenado para la fase de reordenamiento y diversificación.
+243 [normal] ANEXOS
+244 [Heading 1] Anexo 1. Especificaciones Técnicas del Entorno de Simulación Experimental
+245 [normal] Equipamiento de Cómputo: Clúster distribuido equipado con 2 procesadores AMD EPYC de 64 núcleos cada uno, 512 Gigabytes de memoria RAM y aceleradores de cálculo vectorial para redes neuronales.
+246 [normal] Dimensiones del Conjunto de Datos Sintético: 10,000 perfiles de usuario simulados, catálogo de 50,000 videos cortos distribuidos en 15 categorías temáticas y registro de 500,000 eventos de interacción temporal.
+247 [normal] Parámetros de Trabajo en Orange Data Mining: Entorno Orange Canvas v3.36, preprocesamiento con normalización de variables numéricas en escala de cero a uno y evaluación de modelos mediante validación cruzada en diez bloques independientes.

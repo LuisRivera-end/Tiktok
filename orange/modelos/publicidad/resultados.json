@@ -1,0 +1,18 @@
+{
+  "ad_terminal_rows_before_collapse": 81,
+  "ad_terminal_rows": 61,
+  "ad_users": 36,
+  "ad_videos": 1,
+  "ad_campaigns": 1,
+  "ad_impressions": 77,
+  "positive_users": 2,
+  "complete_rows": 17,
+  "skip_rows": 44,
+  "affinity_formula": "0.7 * smoothed organic category completion rate + 0.3 * smoothed organic overall completion rate",
+  "status": "exploratory affinity rule only; no validated ad response model or multi-campaign ranking",
+  "limitation": "CSV has no timestamps, so the organic profile cannot be proven to predate each ad impression.",
+  "paths": {
+    "flow": "E:\\Tiktok\\orange\\modelos\\publicidad\\flujo.ows",
+    "data": "E:\\Tiktok\\orange\\modelos\\publicidad\\afinidad.tab"
+  }
+}

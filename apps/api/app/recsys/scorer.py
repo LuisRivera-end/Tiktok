@@ -2,8 +2,19 @@ from __future__ import annotations
 
 import math
 
-from app.recsys.types import PipelineConfig, ScoredCandidate, UserFeatures, VideoCandidate
+from app.recsys.types import (
+    PipelineConfig,
+    ScoredCandidate,
+    UserFeatures,
+    VideoCandidate,
+    normalized_region,
+)
 from app.recsys.vector import cosine
+
+# Weak account signals. They stay far below the 0.45 abandon penalty and below
+# a real finish-versus-skip gap, so interest still outranks region or a follow.
+REGION_MATCH_BONUS = 0.04
+FOLLOW_BONUS = 0.03
 
 
 def _clamp(value: float, lo: float = 0.0, hi: float = 1.0) -> float:
@@ -44,12 +55,29 @@ def combine_score(
     return score
 
 
+def context_adjustment(user: UserFeatures, video: VideoCandidate) -> tuple[float, list[str]]:
+    bonus = 0.0
+    reasons: list[str] = []
+    user_region = normalized_region(user.region)
+    video_region = normalized_region(video.region)
+    if user_region and video_region and user_region == video_region:
+        bonus += REGION_MATCH_BONUS
+        reasons.append("same_region")
+    creator_id = video.creator_id or ""
+    if creator_id and creator_id in user.followed_creator_ids:
+        bonus += FOLLOW_BONUS
+        reasons.append("followed")
+    return bonus, reasons
+
+
 def score_candidate(
     user: UserFeatures, video: VideoCandidate, source: str, config: PipelineConfig
 ) -> ScoredCandidate:
     y1, y2, y3, y4, y5 = predict_heads(user, video)
     score = combine_score(y1, y2, y3, y4, y5, config)
-    reasons = [source]
+    extra, extra_reasons = context_adjustment(user, video)
+    score += extra
+    reasons = [source, *extra_reasons]
     if y5 > config.early_abandon_threshold:
         reasons.append("early_abandon_penalty")
     if source == "explore":

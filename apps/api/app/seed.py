@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import AdCampaign, AdCreative, Comment, Follow, User, Video
 from app.recsys.vector import CATEGORIES, video_embedding
 from app.security import hash_password
+from app.services.corpus import DEMO_REGIONS, REGIONS, pending_injection
 
 PASSWORD = "veta1234"
 
@@ -33,10 +34,38 @@ async def seed_if_empty(db: AsyncSession) -> None:
     if count:
         return
 
-    viewer = User(email="viewer@veta.local", display_name="Lía Viewer", password_hash=hash_password(PASSWORD), role="viewer", age=21)
-    creator = User(email="creator@veta.local", display_name="Mar Cantera", password_hash=hash_password(PASSWORD), role="creator", age=24)
-    advertiser = User(email="advertiser@veta.local", display_name="Taller Norte", password_hash=hash_password(PASSWORD), role="advertiser", age=30)
-    admin = User(email="admin@veta.local", display_name="Admin Lab", password_hash=hash_password(PASSWORD), role="admin", age=28)
+    viewer = User(
+        email="viewer@veta.local",
+        display_name="Lía Viewer",
+        password_hash=hash_password(PASSWORD),
+        role="viewer",
+        age=21,
+        region=DEMO_REGIONS["viewer@veta.local"],
+    )
+    creator = User(
+        email="creator@veta.local",
+        display_name="Mar Cantera",
+        password_hash=hash_password(PASSWORD),
+        role="creator",
+        age=24,
+        region=DEMO_REGIONS["creator@veta.local"],
+    )
+    advertiser = User(
+        email="advertiser@veta.local",
+        display_name="Taller Norte",
+        password_hash=hash_password(PASSWORD),
+        role="advertiser",
+        age=30,
+        region=DEMO_REGIONS["advertiser@veta.local"],
+    )
+    admin = User(
+        email="admin@veta.local",
+        display_name="Admin Lab",
+        password_hash=hash_password(PASSWORD),
+        role="admin",
+        age=28,
+        region=DEMO_REGIONS["admin@veta.local"],
+    )
     extras = [
         User(
             email=f"creator{i}@veta.local",
@@ -44,6 +73,7 @@ async def seed_if_empty(db: AsyncSession) -> None:
             password_hash=hash_password(PASSWORD),
             role="creator",
             age=20 + i,
+            region=REGIONS[(i - 1) % len(REGIONS)],
         )
         for i in range(1, 9)
     ]
@@ -67,6 +97,7 @@ async def seed_if_empty(db: AsyncSession) -> None:
                 tags=[category, "laboratorio", "corto", "veta"],
                 audio_id=f"audio-{category}-{copy_index % 3}",
                 category=category,
+                region=creator_row.region or "",
                 duration_ms=12000 + (copy_index * 2500) + cat_index * 400,
                 poster_seed=f"{category}-{copy_index}",
                 status="active",
@@ -142,3 +173,73 @@ async def seed_social_if_empty(db: AsyncSession) -> None:
                 db.add(Comment(user_id=mar.id, video_id=video.id, body="el hashtag laboratorio pesa"))
 
     await db.commit()
+
+
+async def inject_corpus_if_needed(db: AsyncSession) -> dict:
+    """Add regional users and clips even when demo accounts already exist. A second pass is a no-op."""
+    users = list((await db.execute(select(User))).scalars())
+    by_email = {user.email: user for user in users}
+    for email, region in DEMO_REGIONS.items():
+        user = by_email.get(email)
+        if user is not None and not (user.region or "").strip():
+            user.region = region
+    blank = sorted((user for user in users if not (user.region or "").strip()), key=lambda user: user.email)
+    for index, user in enumerate(blank):
+        user.region = REGIONS[index % len(REGIONS)]
+
+    videos = list((await db.execute(select(Video))).scalars())
+    by_id = {user.id: user for user in users}
+    for video in videos:
+        if (video.region or "").strip():
+            continue
+        creator = by_id.get(video.creator_id)
+        video.region = (creator.region if creator else "") or ""
+
+    emails = set(by_email)
+    hashes = {video.content_hash for video in videos if video.content_hash}
+    new_users, new_clips = pending_injection(emails, hashes)
+    created: list[User] = []
+    for spec in new_users:
+        row = User(
+            email=spec.email,
+            display_name=spec.display_name,
+            password_hash=hash_password(PASSWORD),
+            role=spec.role,
+            age=spec.age,
+            region=spec.region,
+        )
+        db.add(row)
+        created.append(row)
+    if created:
+        await db.flush()
+        for row in created:
+            by_email[row.email] = row
+
+    created_videos: list[Video] = []
+    for spec in new_clips:
+        creator = by_email.get(spec.creator_email)
+        if creator is None:
+            continue
+        video = Video(
+            creator_id=creator.id,
+            title=spec.title,
+            description="Clip sintético del corpus regional de Veta.",
+            tags=list(spec.tags),
+            audio_id=spec.audio_id,
+            category=spec.category,
+            region=spec.region,
+            duration_ms=spec.duration_ms,
+            poster_seed=spec.content_hash[:40],
+            status="active",
+            play_count=spec.play_count,
+            content_hash=spec.content_hash,
+            embedding=[],
+        )
+        created_videos.append(video)
+    if created_videos:
+        db.add_all(created_videos)
+        await db.flush()
+        for video in created_videos:
+            video.embedding = video_embedding(video.id, video.category, video.audio_id)
+    await db.commit()
+    return {"users": len(created), "clips": len(created_videos)}

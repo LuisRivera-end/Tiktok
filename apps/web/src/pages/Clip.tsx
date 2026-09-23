@@ -53,7 +53,7 @@ export function ClipPage() {
     return <main className="p-8 text-paper/70">Cargando el corte…</main>;
   }
   return (
-    <main className="h-full">
+    <main className="h-dvh">
       <FeedStage items={[item]} token={token} sessionId={sessionId} />
     </main>
   );

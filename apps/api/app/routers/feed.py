@@ -12,7 +12,13 @@ from app.models import AdCampaign, Block, Comment, Follow, InboxItem
 from app.mongo import get_mongo
 from app.recsys.pipeline import rank_organic_feed
 from app.recsys.types import PipelineConfig
-from app.services.catalog import features_from_profile, load_catalog, to_candidate
+from app.services.catalog import (
+    catalog_for_lane,
+    features_from_profile,
+    load_catalog,
+    skip_rates_by_video,
+    to_candidate,
+)
 from app.telemetry.profile import empty_profile
 
 router = APIRouter(prefix="/feed", tags=["feed"])
@@ -26,35 +32,40 @@ async def get_feed(
 ) -> dict:
     started = datetime.now(timezone.utc)
     videos = await load_catalog(db)
-    catalog = [to_candidate(video) for video in videos]
-    video_map = {video.id: video for video in videos}
-
     mongo = get_mongo()
     try:
         profile_doc = await mongo.user_profiles_online.find_one({"user_id": current.id})
     except Exception:
         profile_doc = None
     profile = profile_doc or empty_profile(current.id)
+    try:
+        raw_events = await mongo.events.find(
+            {},
+            {"video_id": 1, "event_type": 1, "watch_ms": 1},
+        ).to_list(length=20_000)
+    except Exception:
+        raw_events = []
+    rates = skip_rates_by_video(raw_events)
+    catalog = [to_candidate(video, skip_rate=rates.get(video.id, 0.0)) for video in videos]
 
     blocked_rows = await db.execute(select(Block.blocked_id).where(Block.blocker_id == current.id))
     blocked = list(blocked_rows.scalars())
-    user_features = features_from_profile(current, profile, blocked)
-
     followees = set(
         (await db.execute(select(Follow.followee_id).where(Follow.follower_id == current.id))).scalars()
     )
+    user_features = features_from_profile(current, profile, blocked, followees=list(followees))
+    if lane in {"following", "friends"} and not followees:
+        elapsed_ms = (datetime.now(timezone.utc) - started).total_seconds() * 1000
+        return {
+            "items": [],
+            "trace": {"lane": lane, "final": 0, "followees": 0},
+            "latency_ms": round(elapsed_ms, 2),
+            "new_user": user_features.is_new,
+        }
+    catalog = catalog_for_lane(catalog, followees, lane)
     if lane in {"following", "friends"}:
-        if not followees:
-            elapsed_ms = (datetime.now(timezone.utc) - started).total_seconds() * 1000
-            return {
-                "items": [],
-                "trace": {"lane": lane, "final": 0, "followees": 0},
-                "latency_ms": round(elapsed_ms, 2),
-                "new_user": user_features.is_new,
-            }
-        catalog = [item for item in catalog if item.creator_id in followees]
         videos = [video for video in videos if video.creator_id in followees]
-        video_map = {video.id: video for video in videos}
+    video_map = {video.id: video for video in videos}
 
     organic, trace = rank_organic_feed(user_features, catalog, PipelineConfig())
     trace["lane"] = lane

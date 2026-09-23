@@ -20,7 +20,7 @@ export function MotionPage({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div ref={root} className="h-full">
+    <div ref={root} className="min-h-full">
       {children}
     </div>
   );

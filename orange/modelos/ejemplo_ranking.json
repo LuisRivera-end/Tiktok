@@ -1,0 +1,101 @@
+{
+  "example_user_id": "2c288a44-502d-41de-a836-52b1aa914046",
+  "history_terminal_rows_days_0_to_4": 68,
+  "category_candidates": 15,
+  "video_candidates_unseen_by_this_user": 174,
+  "ad_campaign_candidates": 1,
+  "top_categories": [
+    {
+      "category": "comedia",
+      "probabilidad_completar": 0.7426666666666667
+    },
+    {
+      "category": "tecnologia",
+      "probabilidad_completar": 0.7413333333333334
+    },
+    {
+      "category": "manualidades",
+      "probabilidad_completar": 0.6574761904761905
+    },
+    {
+      "category": "arte",
+      "probabilidad_completar": 0.5791666666666666
+    },
+    {
+      "category": "baile",
+      "probabilidad_completar": 0.5181666666666666
+    }
+  ],
+  "top_videos": [
+    {
+      "video_id": "4a01a32d-6b56-4995-a079-45fc7d9f2e72",
+      "category": "tecnologia",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.8253333333333334
+    },
+    {
+      "video_id": "2bf81530-02c6-4eea-8ef4-446bd3c0277f",
+      "category": "emprendimiento",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.7005000000000001
+    },
+    {
+      "video_id": "13fb1b67-82f1-4cb8-b386-958253861e05",
+      "category": "ciencia",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.6966666666666668
+    },
+    {
+      "video_id": "c155d0e7-3960-401a-84a1-8f19b75ae4f9",
+      "category": "emprendimiento",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.6805000000000001
+    },
+    {
+      "video_id": "d0cd1c38-7d8e-42b6-bf8b-4eb171e380d8",
+      "category": "arte",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.677
+    },
+    {
+      "video_id": "cf84346d-d3e8-4714-8074-d925f974440f",
+      "category": "ciencia",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.6653333333333333
+    },
+    {
+      "video_id": "90fe24c2-caf9-44a4-99b5-f59295123e63",
+      "category": "musica",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.659
+    },
+    {
+      "video_id": "6bf60a41-7ec3-4941-9db6-73c5e2dc1213",
+      "category": "manualidades",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.6576666666666666
+    },
+    {
+      "video_id": "b6180ff0-e20b-4c0c-a80c-5ec6c1a23201",
+      "category": "cine",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.6505000000000001
+    },
+    {
+      "video_id": "a0b9e8e7-3b0d-4e0a-b325-fe962236cd92",
+      "category": "baile",
+      "video_region": "Chile",
+      "probabilidad_completar": 0.6505000000000001
+    }
+  ],
+  "ad_affinity": [
+    {
+      "campaign_id": "bae635e3-970d-495b-997a-b6bf7691cfe8",
+      "video_id": "0112dc0f-6d37-470d-b356-4ebdc5fa1e1e",
+      "category": "emprendimiento",
+      "organic_category_count_log": 1.791759469228055,
+      "afinidad_exploratoria": 0.4694444444444444
+    }
+  ],
+  "scope": "Offline scores for hypothetical day 5. Does not execute live feed filters, diversity, auction, budget or frequency cap."
+}

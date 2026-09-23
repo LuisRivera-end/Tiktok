@@ -1,0 +1,209 @@
+{
+  "source": "C:\\Users\\lelie\\Downloads\\veta_interactions.csv",
+  "task": "Predict early_skip for terminal complete/skip watch events",
+  "definition": "early_skip=1 for skip events; early_skip=0 for complete events",
+  "n_raw_events": 12271,
+  "n_terminal_events": 5697,
+  "n_train_events": 4526,
+  "n_test_events": 1171,
+  "n_train_sessions": 373,
+  "n_test_sessions": 94,
+  "positive_rate_train": 0.3219178082191781,
+  "positive_rate_test": 0.36806148590947907,
+  "features": [
+    "user_role",
+    "user_region",
+    "video_region",
+    "category",
+    "audio_id",
+    "is_ad",
+    "tags",
+    "duration_s"
+  ],
+  "excluded": [
+    "event_type",
+    "watch_ms",
+    "completion_ratio",
+    "user_id",
+    "video_id",
+    "session_id",
+    "campaign_id",
+    "pass_id"
+  ],
+  "chosen_model": "Random Forest",
+  "chosen_threshold": 0.24,
+  "evaluation": {
+    "Random Forest": {
+      "threshold_from_group_cv": 0.24,
+      "group_cv": {
+        "auc": 0.8662703596283422,
+        "average_precision": 0.7135599500474048,
+        "accuracy": 0.8084401237295625,
+        "balanced_accuracy": 0.8068363802749526,
+        "precision_1": 0.6687643020594966,
+        "recall_1": 0.8023335621139327,
+        "f1_1": 0.7294851794071763,
+        "confusion_matrix_0_1": [
+          [
+            2490,
+            579
+          ],
+          [
+            288,
+            1169
+          ]
+        ]
+      },
+      "held_out_sessions": {
+        "auc": 0.8501818523860287,
+        "average_precision": 0.7762030826893251,
+        "accuracy": 0.7856532877882152,
+        "balanced_accuracy": 0.7742130181225308,
+        "precision_1": 0.7,
+        "recall_1": 0.7308584686774942,
+        "f1_1": 0.7150964812712827,
+        "confusion_matrix_0_1": [
+          [
+            605,
+            135
+          ],
+          [
+            116,
+            315
+          ]
+        ]
+      }
+    },
+    "Random Forest (balanced)": {
+      "threshold_from_group_cv": 0.35999999999999993,
+      "group_cv": {
+        "auc": 0.8579890833859439,
+        "average_precision": 0.6990767918905767,
+        "accuracy": 0.8068935041979673,
+        "balanced_accuracy": 0.8031724243117517,
+        "precision_1": 0.6687898089171974,
+        "recall_1": 0.7927247769389156,
+        "f1_1": 0.7255025125628141,
+        "confusion_matrix_0_1": [
+          [
+            2497,
+            572
+          ],
+          [
+            302,
+            1155
+          ]
+        ]
+      },
+      "held_out_sessions": {
+        "auc": 0.8369332789866433,
+        "average_precision": 0.7589575963126419,
+        "accuracy": 0.7830913748932536,
+        "balanced_accuracy": 0.770732739700257,
+        "precision_1": 0.697986577181208,
+        "recall_1": 0.7238979118329466,
+        "f1_1": 0.7107061503416856,
+        "confusion_matrix_0_1": [
+          [
+            605,
+            135
+          ],
+          [
+            119,
+            312
+          ]
+        ]
+      }
+    },
+    "Logistic Regression": {
+      "threshold_from_group_cv": 0.3499999999999999,
+      "group_cv": {
+        "auc": 0.755176244925398,
+        "average_precision": 0.6183065223690616,
+        "accuracy": 0.7152010605391074,
+        "balanced_accuracy": 0.6971672802146378,
+        "precision_1": 0.548951048951049,
+        "recall_1": 0.6465339739190117,
+        "f1_1": 0.5937598487236054,
+        "confusion_matrix_0_1": [
+          [
+            2295,
+            774
+          ],
+          [
+            515,
+            942
+          ]
+        ]
+      },
+      "held_out_sessions": {
+        "auc": 0.7021884994042767,
+        "average_precision": 0.5948220820987784,
+        "accuracy": 0.6404782237403929,
+        "balanced_accuracy": 0.6462688907004452,
+        "precision_1": 0.508833922261484,
+        "recall_1": 0.6682134570765661,
+        "f1_1": 0.5777331995987964,
+        "confusion_matrix_0_1": [
+          [
+            462,
+            278
+          ],
+          [
+            143,
+            288
+          ]
+        ]
+      }
+    },
+    "Logistic Regression (balanced)": {
+      "threshold_from_group_cv": 0.5299999999999999,
+      "group_cv": {
+        "auc": 0.7576463150333455,
+        "average_precision": 0.6065256404170449,
+        "accuracy": 0.7152010605391074,
+        "balanced_accuracy": 0.6977080343586863,
+        "precision_1": 0.5487804878048781,
+        "recall_1": 0.6485929993136582,
+        "f1_1": 0.5945265806857503,
+        "confusion_matrix_0_1": [
+          [
+            2292,
+            777
+          ],
+          [
+            512,
+            945
+          ]
+        ]
+      },
+      "held_out_sessions": {
+        "auc": 0.6996551075437386,
+        "average_precision": 0.5870326268921852,
+        "accuracy": 0.64133219470538,
+        "balanced_accuracy": 0.646460149244372,
+        "precision_1": 0.5097690941385435,
+        "recall_1": 0.665893271461717,
+        "f1_1": 0.5774647887323944,
+        "confusion_matrix_0_1": [
+          [
+            464,
+            276
+          ],
+          [
+            144,
+            287
+          ]
+        ]
+      }
+    }
+  },
+  "artifacts": {
+    "all": "E:\\Tiktok\\veta_terminal_all.tab",
+    "train": "E:\\Tiktok\\veta_terminal_train.tab",
+    "test": "E:\\Tiktok\\veta_terminal_test.tab",
+    "model": "E:\\Tiktok\\veta_early_skip_model.pkcls",
+    "workflow": "E:\\Tiktok\\veta_modelado.ows"
+  },
+  "caveat": "A session-level holdout checks new sessions among the same overall catalog/users. It does not prove performance on new videos or users."
+}

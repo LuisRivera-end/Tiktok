@@ -1,6 +1,10 @@
 from dataclasses import dataclass, field
 
 
+def normalized_region(value: str | None) -> str:
+    return str(value or "").strip().casefold()
+
+
 @dataclass
 class UserFeatures:
     user_id: str
@@ -10,8 +14,10 @@ class UserFeatures:
     recent_video_ids: list[str] = field(default_factory=list)
     session_video_ids: list[str] = field(default_factory=list)
     blocked_creator_ids: list[str] = field(default_factory=list)
+    followed_creator_ids: list[str] = field(default_factory=list)
     age: int = 18
     is_new: bool = True
+    region: str = ""
 
 
 @dataclass
@@ -29,6 +35,7 @@ class VideoCandidate:
     age_restricted: bool = False
     content_hash: str = ""
     skip_rate: float = 0.0
+    region: str = ""
 
 
 @dataclass

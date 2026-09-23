@@ -145,3 +145,4 @@ class SimIn(BaseModel):
     users: int = Field(default=24, ge=2, le=200)
     days: int = Field(default=2, ge=1, le=30)
     events_per_user: int = Field(default=18, ge=4, le=80)
+    pass_id: str = Field(default="", max_length=40)

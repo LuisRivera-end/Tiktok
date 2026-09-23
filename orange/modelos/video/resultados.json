@@ -1,0 +1,154 @@
+{
+  "task": "video",
+  "target": "complete_response = 1 for complete, 0 for skip",
+  "features_categorical": [
+    "user_role",
+    "user_region",
+    "video_region",
+    "category",
+    "audio_id",
+    "tags"
+  ],
+  "features_numeric": [
+    "prior_category_rate",
+    "prior_category_count",
+    "prior_overall_rate",
+    "prior_overall_count",
+    "prior_region_rate",
+    "prior_region_count",
+    "duration_s",
+    "same_region"
+  ],
+  "excluded_from_features": [
+    "event_type",
+    "watch_ms",
+    "completion_ratio",
+    "early_skip",
+    "user_id",
+    "video_id",
+    "session_id",
+    "campaign_id",
+    "pass_id"
+  ],
+  "rows": 1800,
+  "train_rows": 1411,
+  "test_rows": 389,
+  "train_users": 64,
+  "test_users": 16,
+  "selected_by": "largest 4-fold user-grouped training CV AUC ROC",
+  "selected_model": "Random Forest",
+  "evaluations": {
+    "Logistic Regression": {
+      "grouped_train_cv": {
+        "n": 1411,
+        "positive_rate": 0.66194188518781,
+        "accuracy": 0.9036144578313253,
+        "balanced_accuracy": 0.8697516149740303,
+        "f1_complete": 0.9304703476482618,
+        "brier": 0.0716006357958306,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            365,
+            112
+          ],
+          [
+            24,
+            910
+          ]
+        ],
+        "auc_roc": 0.9532263567353059,
+        "average_precision": 0.9692557638706336
+      },
+      "held_out_users": {
+        "n": 389,
+        "positive_rate": 0.6555269922879178,
+        "accuracy": 0.9023136246786633,
+        "balanced_accuracy": 0.8865378987415862,
+        "f1_complete": 0.9263565891472868,
+        "brier": 0.07137404848216107,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            112,
+            22
+          ],
+          [
+            16,
+            239
+          ]
+        ],
+        "auc_roc": 0.9649546385718466,
+        "average_precision": 0.9827512403263606
+      }
+    },
+    "Random Forest": {
+      "grouped_train_cv": {
+        "n": 1411,
+        "positive_rate": 0.66194188518781,
+        "accuracy": 0.920623671155209,
+        "balanced_accuracy": 0.8943959615548642,
+        "f1_complete": 0.9420889348500517,
+        "brier": 0.06107990720264008,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            388,
+            89
+          ],
+          [
+            23,
+            911
+          ]
+        ],
+        "auc_roc": 0.9681898374476452,
+        "average_precision": 0.9822291377184971
+      },
+      "held_out_users": {
+        "n": 389,
+        "positive_rate": 0.6555269922879178,
+        "accuracy": 0.9125964010282777,
+        "balanced_accuracy": 0.8943810359964881,
+        "f1_complete": 0.9346153846153846,
+        "brier": 0.06115816395315625,
+        "confusion_matrix_0_skip_1_complete": [
+          [
+            112,
+            22
+          ],
+          [
+            12,
+            243
+          ]
+        ],
+        "auc_roc": 0.9787825577992392,
+        "average_precision": 0.9899287820480711
+      }
+    }
+  },
+  "majority_accuracy_test": 0.6555269922879178,
+  "paths": {
+    "all.tab": "E:\\Tiktok\\orange\\modelos\\video\\all.tab",
+    "train.tab": "E:\\Tiktok\\orange\\modelos\\video\\train.tab",
+    "test.tab": "E:\\Tiktok\\orange\\modelos\\video\\test.tab",
+    "model.pkcls": "E:\\Tiktok\\orange\\modelos\\video\\model.pkcls",
+    "flujo.ows": "E:\\Tiktok\\orange\\modelos\\video\\flujo.ows"
+  },
+  "same_region_rule_test": {
+    "n": 389,
+    "positive_rate": 0.6555269922879178,
+    "accuracy": 0.897172236503856,
+    "balanced_accuracy": 0.8719929762949956,
+    "f1_complete": 0.9239543726235742,
+    "brier": 0.10282776349614396,
+    "confusion_matrix_0_skip_1_complete": [
+      [
+        106,
+        28
+      ],
+      [
+        12,
+        243
+      ]
+    ],
+    "auc_roc": 0.8719929762949956,
+    "average_precision": 0.8853306385778208
+  }
+}

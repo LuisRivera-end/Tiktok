@@ -22,6 +22,7 @@ class Video(Base):
     tags: Mapped[list[str]] = mapped_column(JSON, default=list)
     audio_id: Mapped[str] = mapped_column(String(80), default="audio-lab")
     category: Mapped[str] = mapped_column(String(40), index=True)
+    region: Mapped[str] = mapped_column(String(40), default="", server_default="")
     duration_ms: Mapped[int] = mapped_column(Integer, default=15000)
     width: Mapped[int] = mapped_column(Integer, default=1080)
     height: Mapped[int] = mapped_column(Integer, default=1920)

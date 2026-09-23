@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="Veta: predicción de abandono temprano" description="Clasifica skip frente a complete. La prueba contiene sesiones distintas del entrenamiento. La rama de datos completos entrena el modelo final.">
+  <nodes>
+    <node id="0" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="Entrenamiento (sesiones)" position="(85.0, 235.0)" />
+    <node id="1" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="Prueba (sesiones)" position="(85.0, 390.0)" />
+    <node id="2" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="Eventos terminales completos" position="(85.0, 560.0)" />
+    <node id="3" name="Random Forest" qualified_name="Orange.widgets.model.owrandomforest.OWRandomForest" project_name="Orange3" version="" title="Bosque aleatorio" position="(365.0, 170.0)" />
+    <node id="4" name="Logistic Regression" qualified_name="Orange.widgets.model.owlogisticregression.OWLogisticRegression" project_name="Orange3" version="" title="Regresión logística" position="(365.0, 275.0)" />
+    <node id="5" name="Test and Score" qualified_name="Orange.widgets.evaluate.owtestandscore.OWTestAndScore" project_name="Orange3" version="" title="Evaluación por sesión" position="(585.0, 330.0)" />
+    <node id="6" name="Confusion Matrix" qualified_name="Orange.widgets.evaluate.owconfusionmatrix.OWConfusionMatrix" project_name="Orange3" version="" title="Matriz de confusión" position="(820.0, 265.0)" />
+    <node id="7" name="ROC Analysis" qualified_name="Orange.widgets.evaluate.owrocanalysis.OWROCAnalysis" project_name="Orange3" version="" title="Curva ROC" position="(820.0, 390.0)" />
+    <node id="8" name="Random Forest" qualified_name="Orange.widgets.model.owrandomforest.OWRandomForest" project_name="Orange3" version="" title="Modelo final" position="(365.0, 555.0)" />
+    <node id="9" name="Save Model" qualified_name="Orange.widgets.model.owsavemodel.OWSaveModel" project_name="Orange3" version="" title="Guardar modelo" position="(585.0, 555.0)" />
+    <node id="10" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Datos terminales" position="(275.0, 690.0)" />
+  </nodes>
+  <links>
+    <link id="0" source_node_id="0" sink_node_id="5" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="train_data" />
+    <link id="1" source_node_id="1" sink_node_id="5" source_channel="Data" sink_channel="Test Data" enabled="true" source_channel_id="data" sink_channel_id="test_data" />
+    <link id="2" source_node_id="3" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" source_channel_id="learner" sink_channel_id="learner" />
+    <link id="3" source_node_id="4" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" source_channel_id="learner" sink_channel_id="learner" />
+    <link id="4" source_node_id="5" sink_node_id="6" source_channel="Evaluation Results" sink_channel="Evaluation Results" enabled="true" source_channel_id="evaluations_results" sink_channel_id="evaluation_results" />
+    <link id="5" source_node_id="5" sink_node_id="7" source_channel="Evaluation Results" sink_channel="Evaluation Results" enabled="true" source_channel_id="evaluations_results" sink_channel_id="evaluation_results" />
+    <link id="6" source_node_id="2" sink_node_id="8" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+    <link id="7" source_node_id="8" sink_node_id="9" source_channel="Model" sink_channel="Model" enabled="true" source_channel_id="model" sink_channel_id="model" />
+    <link id="8" source_node_id="2" sink_node_id="10" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+  </links>
+  <annotations />
+  <thumbnail />
+  <node_properties>
+    <properties node_id="0" format="pickle">gASVwQAAAAAAAAB9lCiMBnNvdXJjZZRLAIwMcmVjZW50X3BhdGhzlF2UjB5vcmFuZ2V3aWRnZXQudXRpbHMuZmlsZWRpYWxvZ3OUjApSZWNlbnRQYXRolJOUKYGUfZQojAdhYnNwYXRolIwhRTovVGlrdG9rL3ZldGFfdGVybWluYWxfdHJhaW4udGFilIwGcHJlZml4lE6MB3JlbHBhdGiUTowFdGl0bGWUjACUjAVzaGVldJRoDowLZmlsZV9mb3JtYXSUTnViYXUu</properties>
+    <properties node_id="1" format="pickle">gASVwAAAAAAAAAB9lCiMBnNvdXJjZZRLAIwMcmVjZW50X3BhdGhzlF2UjB5vcmFuZ2V3aWRnZXQudXRpbHMuZmlsZWRpYWxvZ3OUjApSZWNlbnRQYXRolJOUKYGUfZQojAdhYnNwYXRolIwgRTovVGlrdG9rL3ZldGFfdGVybWluYWxfdGVzdC50YWKUjAZwcmVmaXiUTowHcmVscGF0aJROjAV0aXRsZZSMAJSMBXNoZWV0lGgOjAtmaWxlX2Zvcm1hdJROdWJhdS4=</properties>
+    <properties node_id="2" format="pickle">gASVvwAAAAAAAAB9lCiMBnNvdXJjZZRLAIwMcmVjZW50X3BhdGhzlF2UjB5vcmFuZ2V3aWRnZXQudXRpbHMuZmlsZWRpYWxvZ3OUjApSZWNlbnRQYXRolJOUKYGUfZQojAdhYnNwYXRolIwfRTovVGlrdG9rL3ZldGFfdGVybWluYWxfYWxsLnRhYpSMBnByZWZpeJROjAdyZWxwYXRolE6MBXRpdGxllIwAlIwFc2hlZXSUaA6MC2ZpbGVfZm9ybWF0lE51YmF1Lg==</properties>
+    <properties node_id="3" format="literal">{'n_estimators': 100, 'class_weight': False, 'auto_apply': True, '__version__': 1}</properties>
+    <properties node_id="8" format="literal">{'n_estimators': 100, 'class_weight': False, 'auto_apply': True, '__version__': 1}</properties>
+    <properties node_id="5" format="literal">{'resampling': 5, '__version__': 4}</properties>
+    <properties node_id="9" format="literal">{'stored_path': 'E:\\Tiktok\\veta_early_skip_model.pkcls', 'stored_name': 'veta_early_skip_model.pkcls', 'auto_save': False}</properties>
+  </node_properties>
+  <session_state>
+    <window_groups />
+  </session_state>
+</scheme>

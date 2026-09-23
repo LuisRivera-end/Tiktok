@@ -49,7 +49,7 @@ export function FeedPage({ initialLane = "foryou", showLanes = true }: { initial
         : "No hay clips en el catálogo todavía.";
 
   return (
-    <main className="h-full">
+    <main className="h-dvh">
       <FeedStage
         items={data.items}
         token={token}
