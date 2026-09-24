@@ -1,10 +1,13 @@
 from __future__ import annotations
+import random
 
 from app.ads.types import AdCandidate, AuctionWinner, InsertionPolicy
 from app.recsys.types import UserFeatures
 
 
 def is_targeted(user: UserFeatures, ad: AdCandidate) -> bool:
+    if ad.targeting_genders and user.gender not in ad.targeting_genders:
+        return False
     if not ad.targeting_categories and not ad.targeting_tags:
         return True
     cats = set(ad.targeting_categories)
@@ -33,7 +36,7 @@ def quality_score(ad: AdCandidate) -> float:
 
 
 def ecpm(ad: AdCandidate) -> float:
-    return ad.bid_cents * ad.p_click * quality_score(ad)
+    return 1000 * ad.bid_cents * ad.p_click
 
 
 def session_abandon_risk(ad: AdCandidate) -> float:
@@ -53,10 +56,14 @@ def run_auction(
             continue
         if not is_targeted(user, ad):
             continue
-        if session_abandon_risk(ad) > policy.session_abandon_threshold:
+        if ad.mature_exposures >= 100 and session_abandon_risk(ad) > policy.session_abandon_threshold:
             continue
         eligible.append(AuctionWinner(ad=ad, ecpm=ecpm(ad), quality=quality_score(ad)))
     if not eligible:
         return None
-    eligible.sort(key=lambda item: item.ecpm, reverse=True)
-    return eligible[0]
+    eligible.sort(key=lambda item: (-item.ecpm, item.ad.campaign_id, item.ad.creative_id))
+    winner = random.choice(eligible) if random.random() < policy.exploration_rate else eligible[0]
+    winner.policy = "epsilon-greedy-v1"
+    winner.eligible_ids = [row.ad.creative_id for row in eligible]
+    winner.selection_probability = policy.exploration_rate / len(eligible) + (1 - policy.exploration_rate if winner is eligible[0] else 0)
+    return winner

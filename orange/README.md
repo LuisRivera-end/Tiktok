@@ -39,3 +39,12 @@ File (veta_interactions.csv)
 Otras columnas del mismo archivo (`user_id`, `audio_id`, `is_ad`, `tags`) se pueden dejar como metadatos.
 
 No copies cifras de un reporte anterior. Mide lo que salga de **este** CSV y de la mesa de señales del Laboratorio, incluido el desglose por región.
+# Exposiciones y MMoE
+
+La exportación por eventos se conserva. El Laboratorio permite al administrador descargar
+`/lab/orange/exposures.csv`, con una fila por exposición, género histórico, origen, características
+previas y máscaras de objetivos. La preparación y entrenamiento están en `docs/MMOE.md`.
+
+Abra `modelos/mmoe/flujo.ows` para inspeccionar las cuatro salidas del MMoE en datos reservados.
+La entrega inicial está marcada **SIMULADA** y no activa el ranking. Para regenerar sus tablas,
+ejecute `modelos/mmoe/prepare_orange.py` con el Python de Orange después de entrenar.

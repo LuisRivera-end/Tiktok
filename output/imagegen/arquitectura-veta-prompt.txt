@@ -1,0 +1,34 @@
+Use case: infographic-diagram
+Asset type: Imagen de arquitectura técnica para documentación académica del proyecto Veta.
+Primary request: Genera un diagrama de arquitectura del sistema Veta en español, incluyendo explícitamente minería de datos, fiel a la implementación descrita abajo.
+Style: infografía técnica editorial impecable, fondo marfil casi blanco, tipografía sans serif muy legible, títulos azul tinta, acentos teal para operación y cobre para minería. Tarjetas planas de borde fino, iconos lineales sobrios, conectores ortogonales precisos con flechas, gran espacio en blanco. Formato horizontal amplio, alta resolución. Nada de perspectiva 3D ni texto diminuto.
+Título exacto: "VETA · Arquitectura del sistema"
+Subtítulo exacto: "Recomendación de videos, publicidad y minería de datos"
+
+Composition: Dos franjas amplias. Franja superior ocupa 52%, titulada "01 · OPERACIÓN EN LÍNEA". Franja inferior ocupa 40%, titulada "02 · MINERÍA Y APRENDIZAJE OFFLINE". Footer pequeño legible. Orden y conexiones inequívocos, sin líneas atravesando tarjetas.
+
+FRANJA SUPERIOR:
+Columna izquierda: tarjeta "Usuarios" con "Espectador · Creador · Anunciante · Administrador", conectada a tarjeta "Aplicación web" con "React 19 · Vite · Tailwind CSS" y "Feed · Publicación · Campañas · Laboratorio".
+Columna central amplia: contenedor "API · FastAPI / Python" con cuatro módulos internos:
+- "Autenticación y contenido" / "JWT · Videos · Acciones sociales"
+- "Recomendación" / "Elegibilidad → Recuperación → Ranking → Diversidad"
+- "Publicidad" / "Segmentación · Subasta · Frecuencia · CPC simulado"
+- "Medición y analítica" / "Eventos · Exposiciones · Perfil de intereses · BI"
+Conectar aplicación web bidireccionalmente a API, etiqueta "HTTP / JSON · Nginx".
+Columna derecha: tres almacenes alineados verticalmente:
+"PostgreSQL" / "Usuarios · Videos · Campañas · Clics y gasto"
+"MongoDB" / "Eventos · Exposiciones · Perfil de intereses"
+"Archivos multimedia" / "Videos e imágenes · Volumen local"
+Cada almacén conectado bidireccionalmente con API. Pequeña flecha de retorno dentro del contenedor API desde medición hacia recomendación, etiqueta "Actualización del perfil".
+
+FRANJA INFERIOR:
+Desde el módulo Medición y analítica de API, flecha descendente a una tarjeta en extremo izquierdo "Exportación del Laboratorio", subtítulo "Datos reales o simulados identificados". Esta tarjeta contiene dos salidas diferentes, cada una claramente etiquetada:
+"CSV por evento" conduce a rama superior de esta franja: tarjeta "Orange Data Mining" con "Preparación y selección de variables", "Correlaciones · PCA · k-Means", "Bosque aleatorio · Regresión logística"; a su derecha tarjeta "Evaluación exploratoria" con "Abandono temprano · Categorías · Videos", "ROC · Matriz de confusión · Test and Score". Estas dos tarjetas forman una rama claramente marcada "Exploración y modelos offline". Orange no conecta directamente al recomendador.
+"CSV por exposición" conduce a rama inferior de esta franja: tarjeta "Entrenamiento MMoE · PyTorch" con "Preparación · Etiquetas maduras · Partición temporal", "4 expertos → Compuertas → 4 tareas", "Finalización · Interacción · Continuidad · Clic"; a su derecha tarjeta "Validación y artefactos" con "Comparación con modelos base", "model.json · report.json · readiness.json"; a su derecha tarjeta "Inferencia · NumPy" con "Modo sombra → Activación validada". Desde esta última tarjeta una flecha DISCONTINUA sube por margen derecho hasta API/recomendación y publicidad. Etiqueta exacta de flecha "Solo con modelo real aprobado". Colocar distintivo de estado visible cerca de esa flecha "Predeterminado: heurístico".
+
+Pie de imagen, dos notas precisas legibles:
+"Entorno local de laboratorio · Docker Compose"
+"Los modelos simulados no activan el ranking. Orange realiza análisis offline."
+Leyenda discreta: "Línea continua: flujo de datos" y "Línea discontinua: integración condicionada".
+
+Constraints: Todo el texto debe ser español correcto y muy legible, respetar acentos. Priorizar legibilidad y fidelidad a conexiones. No inventar servicios cloud, Kafka, Redis, Kubernetes, APIs externas, métricas de desempeño ni porcentajes. No mostrar Orange como servicio de producción. No sugerir que MMoE está activado por defecto. No incluir credenciales. Imagen profesional apta para tesis, con jerarquía clara y conectores sin cruces.

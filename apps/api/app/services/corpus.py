@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import io
 from dataclasses import dataclass
+from datetime import date, datetime, timedelta, timezone
 
 from app.recsys.vector import CATEGORIES
 
@@ -74,6 +75,9 @@ ORANGE_COLUMNS = [
     "event_id",
     "event_ts",
     "feed_position",
+    "exposure_id",
+    "gender",
+    "origin",
 ]
 
 _SOCIAL_ROTATION = (
@@ -435,9 +439,12 @@ def build_orange_csv(events: list[dict]) -> str:
                 event.get("session_id") or "",
                 _tag_text(event.get("tags")),
                 event.get("pass_id") or "",
-                str(event.get("_id") or ""),
+                str(event.get("event_id") or event.get("_id") or ""),
                 timestamp.isoformat() if hasattr(timestamp, "isoformat") else str(timestamp or ""),
                 "" if position is None else position,
+                event.get("exposure_id") or "",
+                event.get("gender") or "unspecified",
+                event.get("origin") or "legacy",
             ]
         )
     return buffer.getvalue()
@@ -569,6 +576,35 @@ def event_type_breakdown(events: list[dict]) -> list[dict]:
     return rows
 
 
+def daily_breakdown(events: list[dict], *, today: date | None = None, days: int = 8) -> list[dict]:
+    """UTC dates touched by a rolling seven-day window, including both partial end days."""
+    last_day = today or datetime.now(timezone.utc).date()
+    first_day = last_day - timedelta(days=days - 1)
+    buckets: dict[date, list[dict]] = {}
+    for event in events:
+        timestamp = event.get("ts")
+        if isinstance(timestamp, str):
+            try:
+                timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+            except ValueError:
+                continue
+        if not isinstance(timestamp, datetime):
+            continue
+        stamp = timestamp.replace(tzinfo=timezone.utc) if timestamp.tzinfo is None else timestamp.astimezone(timezone.utc)
+        day = stamp.date()
+        if first_day <= day <= last_day:
+            buckets.setdefault(day, []).append(event)
+    return [
+        {
+            "date": (first_day + timedelta(days=index)).isoformat(),
+            "events": len(bucket),
+            "views": len(_playbacks(bucket)),
+        }
+        for index in range(days)
+        for bucket in [buckets.get(first_day + timedelta(days=index), [])]
+    ]
+
+
 def _focus(events: list[dict], *, region: str = "", category: str = "") -> dict:
     return {
         "region": region,
@@ -595,6 +631,7 @@ def dashboard_slice(
     report["categories"] = category_breakdown(_narrow(events, region=chosen_region))
     focused = _narrow(events, region=chosen_region, category=chosen_category)
     report["event_types"] = event_type_breakdown(focused)
+    report["daily"] = daily_breakdown(focused)
     report["focus"] = _focus(focused, region=chosen_region, category=chosen_category)
     if not chosen_region:
         report["selected"] = None

@@ -24,6 +24,11 @@ async def ensure_indexes() -> None:
     await db.events.create_index([("campaign_id", 1), ("ts", -1)])
     await db.user_profiles_online.create_index("user_id", unique=True)
     await db.ranking_traces.create_index([("user_id", 1), ("ts", -1)])
+    await db.events.create_index("event_id", unique=True, partialFilterExpression={"event_id": {"$type": "string"}})
+    await db.events.create_index([("exposure_id", 1), ("ts", 1)])
+    await db.exposures.create_index([("campaign_id", 1), ("started_at", -1)])
+    await db.exposures.create_index([("user_id", 1), ("session_id", 1), ("started_at", 1)])
+    await db.decisions.create_index("expires_at", expireAfterSeconds=0)
 
 
 async def close_mongo() -> None:

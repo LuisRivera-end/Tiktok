@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { ExposureMetrics } from "@/components/ExposureMetrics";
+import { ReadinessPanel } from "@/components/ReadinessPanel";
 
 import { BiReport } from "@/components/BiReport";
 import { useAuth } from "@/context/Auth";
 import { api, type Metrics } from "@/lib/api";
 
 const BASE = import.meta.env.VITE_API_URL || "/api";
+const number = new Intl.NumberFormat("es-MX");
 
 export function LabPage() {
   const { token } = useAuth();
@@ -105,11 +108,11 @@ export function LabPage() {
   return (
     <main className="min-h-full bg-paper px-5 py-8 text-ink sm:px-10 lg:px-12">
       <header className="max-w-6xl border-b border-ink/15 pb-4 sm:pb-6">
-        <p className="text-sm text-ink/60">Laboratorio / BI</p>
-        <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">Mesa de señales</h1>
-        <p className="mt-3 max-w-2xl text-ink/70">Explora el progreso de los clips por región y categoría.</p>
+        <p className="text-sm text-ink/60">Laboratorio / Inteligencia de negocios</p>
+        <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">Informe de rendimiento</h1>
+        <p className="mt-3 max-w-2xl text-ink/70">Explora reproducciones e interacciones por región, categoría y día. Selecciona una barra o una fila para profundizar en el corte.</p>
         <p className="mt-3 text-sm text-ink/60">
-          Últimos 7 días · {metrics?.events ?? 0} eventos · {metrics?.views ?? 0} reproducciones · {metrics?.active_users ?? 0} usuarios
+          Periodo: últimos 7 días · Total disponible: {number.format(metrics?.events ?? 0)} eventos, {number.format(metrics?.views ?? 0)} reproducciones y {number.format(metrics?.active_users ?? 0)} usuarios
         </p>
         {metrics?.truncated && <p className="mt-2 rounded-md bg-skip/10 px-3 py-2 text-sm text-ink" role="status">Muestra limitada a los 20 000 eventos más recientes del periodo.</p>}
       </header>
@@ -150,15 +153,18 @@ export function LabPage() {
 
       <section className="mt-6 max-w-7xl sm:mt-8" aria-labelledby="bi-dashboard">
         <h2 id="bi-dashboard" className="font-display text-2xl font-extrabold">
-          Reproducciones
+          Panel interactivo
         </h2>
-        <p className="mt-2 max-w-xl text-ink/70">Los porcentajes usan reproducciones; el volumen incluye todos los eventos.</p>
+        <p className="mt-2 max-w-2xl text-ink/70">Los indicadores y gráficos muestran el corte seleccionado. Los porcentajes de reproducción y los recuentos de eventos tienen bases distintas.</p>
         {loading && <p className="mt-4 text-sm text-ink/60" role="status">Cargando métricas…</p>}
         {!loading && metrics?.events === 0 && <p className="mt-4 rounded-lg bg-paper-2 p-4 text-sm">Aún no hay eventos en los últimos 7 días. Abre «Simulación y exportación» y corre el simulador para explorar el tablero.</p>}
-        <div className="mt-5 grid min-w-0 gap-4 lg:grid-cols-[14rem_minmax(0,1fr)]">
-          <aside className="grid h-fit grid-cols-2 gap-x-3 rounded-xl border border-ink/10 bg-paper-2/60 p-4 lg:block">
-            <h3 className="col-span-2 font-display text-lg font-bold">Corte</h3>
-            <label className="mt-3 block min-w-0 text-sm text-ink/70">
+        <div className="mt-5 min-w-0">
+          <div className="mb-4 flex flex-wrap items-end gap-4 rounded-xl border border-ink/10 bg-paper-2/60 p-4">
+            <div className="w-full sm:w-auto sm:min-w-48">
+              <h3 className="font-display text-lg font-bold">Filtros del informe</h3>
+              <p className="mt-1 text-xs text-ink/60">Las selecciones se aplican juntas.</p>
+            </div>
+            <label className="block min-w-44 flex-1 text-sm text-ink/70 sm:max-w-56">
               Región del clip
               <select
                 className="mt-1 h-11 w-full rounded-md border border-ink/20 bg-paper px-3 text-ink focus-visible:outline-2 focus-visible:outline-lab"
@@ -173,7 +179,7 @@ export function LabPage() {
                 ))}
               </select>
             </label>
-            <label className="mt-3 block min-w-0 text-sm text-ink/70 lg:mt-4">
+            <label className="block min-w-44 flex-1 text-sm text-ink/70 sm:max-w-56">
               Categoría
               <select
                 className="mt-1 h-11 w-full rounded-md border border-ink/20 bg-paper px-3 text-ink focus-visible:outline-2 focus-visible:outline-lab"
@@ -191,22 +197,29 @@ export function LabPage() {
                 setCategory("");
               }}
               disabled={!region && !category}
-              className="col-span-2 mt-4 w-fit text-sm font-semibold text-ink underline underline-offset-4 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-lab"
+              className="h-11 w-full text-left text-sm font-semibold text-ink underline underline-offset-4 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-lab sm:w-fit"
             >
               Borrar filtros
             </button>
-          </aside>
-          <BiReport
+          </div>
+          {!loading && <BiReport
             regions={regions}
             categories={metrics?.categories ?? []}
             eventTypes={metrics?.event_types ?? []}
+            daily={metrics?.daily ?? []}
             focus={metrics?.focus ?? null}
             region={region}
             category={category}
             onRegion={setRegion}
             onCategory={setCategory}
-          />
+          />}
         </div>
+      </section>
+
+      <section className="mt-12 max-w-7xl" aria-labelledby="diagnostics">
+        <h2 id="diagnostics" className="mb-4 font-display text-2xl font-extrabold">Diagnósticos complementarios</h2>
+        <ExposureMetrics />
+        <ReadinessPanel />
       </section>
 
       <section className="mt-10 max-w-2xl" aria-labelledby="etl">
@@ -224,8 +237,8 @@ export function LabPage() {
           <li>
             <h3 className="font-display text-lg font-extrabold">Transformar</h3>
             <p className="mt-1 text-ink/70">
-              Se separan las reproducciones de las acciones sociales sin tiempo visto. El progreso usa completion_ratio
-              y early_skip marca solo skips con menos de 2 segundos. Los porcentajes se recalculan para cada corte.
+              Se separan las reproducciones de las acciones sociales sin tiempo visto. El progreso usa la proporción vista
+              y el abandono temprano cuenta solo omisiones antes de 2 segundos. Los porcentajes se recalculan para cada corte.
             </p>
           </li>
           <li>

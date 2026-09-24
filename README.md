@@ -1,5 +1,15 @@
 # Veta
 
+## MMoE y campañas por clic
+
+El perfil admite género declarado opcional y las campañas pueden seleccionar audiencia.
+La medición nueva une eventos por exposición, registra clics al destino y calcula gasto CPC
+simulado sin duplicados. El MMoE tiene entrenamiento reproducible, comparación con/sin género,
+modo sombra y activación condicionada a resultados con datos reales.
+
+Guía completa: [docs/MMOE.md](docs/MMOE.md). Flujo nuevo de inspección:
+[orange/modelos/mmoe/flujo.ows](orange/modelos/mmoe/flujo.ows) (demostración **simulada**).
+
 Prototipo escolar del pipeline de recomendación (sourcing → filtro → ranking multiobjetivo → diversidad) y de la subasta publicitaria descrita como trabajo futuro en el Capítulo V. **No se publica a internet.** Corre en el laboratorio: Docker o máquinas locales.
 
 PostgreSQL guarda usuarios, clips y campañas. MongoDB guarda telemetría (reproducciones, skips, likes, impresiones de anuncio) y el perfil caliente del usuario.

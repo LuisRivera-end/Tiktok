@@ -77,8 +77,14 @@ def score_candidate(
     score = combine_score(y1, y2, y3, y4, y5, config)
     extra, extra_reasons = context_adjustment(user, video)
     score += extra
+    from app.ml.serving import predict
+    from app.ml.features import features_for
+    model = predict(features_for(user, video), "content")
+    if model and model["active"]:
+        probabilities = model["predictions"]
+        score = .5 * probabilities["p_complete"] + .2 * probabilities["p_engage"] + .3 * probabilities["p_continue"] + extra
     reasons = [source, *extra_reasons]
-    if y5 > config.early_abandon_threshold:
+    if y5 > config.early_abandon_threshold and not (model and model["active"]):
         reasons.append("early_abandon_penalty")
     if source == "explore":
         reasons.append("new_creator")
@@ -92,4 +98,6 @@ def score_candidate(
         score=score,
         source=source,
         reasons=reasons,
+        predictions=model["predictions"] if model else {},
+        model_version=model["version"] if model else "heuristic-v1",
     )

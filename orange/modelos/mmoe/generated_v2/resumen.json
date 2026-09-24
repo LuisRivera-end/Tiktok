@@ -1,0 +1,15 @@
+{
+  "origin": "simulated",
+  "dataset_sha256": "8c4ec68b3de5a77ec0843d347187d72b8bec0a1bddb154e626eee9e500c633f4",
+  "selected": "without_gender",
+  "approved": {
+    "content": false,
+    "ads": false
+  },
+  "heldout_rows_by_task": {
+    "complete": 2872,
+    "engage": 2872,
+    "continue": 2740,
+    "click": 718
+  }
+}

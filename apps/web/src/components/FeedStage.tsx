@@ -17,6 +17,7 @@ import { ShareSheet } from "@/components/ShareSheet";
 import { useClipFrame } from "@/components/Shell";
 import { api, mediaSrc, type FeedItem } from "@/lib/api";
 import { cn } from "@/lib/cn";
+import { useExposure } from "@/lib/useExposure";
 import { captionTags } from "@/lib/hashtags";
 import { duration, gsap, useGSAP } from "@/lib/motion";
 
@@ -53,7 +54,7 @@ export function FeedStage({
   const holdTimer = useRef<number | null>(null);
   const lastTap = useRef(0);
   const lastGo = useRef(0);
-  const watchRef = useRef(0);
+  const advanceRef = useRef<() => void>(() => {});
   const durationRef = useRef(1);
   const seekingRef = useRef(false);
   const { setLandscape } = useClipFrame();
@@ -88,41 +89,6 @@ export function FeedStage({
     setLandscape(false);
   }, [item, forcedLandscape, narrow, setLandscape]);
 
-  const send = useCallback(
-    async (
-      eventType: string,
-      extra: Partial<{ watch_ms: number; is_ad: boolean; context: Record<string, string> }> = {},
-    ) => {
-      if (!item) return;
-      await api(
-        "/events",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            events: [
-              {
-                session_id: sessionId,
-                video_id: item.video_id,
-                event_type: eventType,
-                watch_ms: extra.watch_ms ?? watchRef.current,
-                duration_ms: item.video.duration_ms,
-                completion_ratio: watchRef.current / Math.max(item.video.duration_ms, 1),
-                loop_count: 0,
-                feed_position: item.position,
-                is_ad: extra.is_ad ?? item.kind === "ad",
-                campaign_id: item.campaign_id,
-                device: { ua: navigator.userAgent },
-                context: extra.context ?? { viewport: `${window.innerWidth}x${window.innerHeight}` },
-              },
-            ],
-          }),
-        },
-        token,
-      );
-    },
-    [item, sessionId, token],
-  );
-
   const paintProgress = useCallback((ratio: number) => {
     const clamped = Math.min(1, Math.max(0, ratio));
     if (progressEl.current) progressEl.current.style.width = `${clamped * 100}%`;
@@ -133,16 +99,27 @@ export function FeedStage({
     }
   }, []);
 
+  const { send, close, click, watchRef, error: telemetryError, resetPosition } = useExposure(
+    item, index, token, sessionId, stage, paused || !!sheet, paintProgress, () => advanceRef.current(),
+  );
+
+  useEffect(() => {
+    const video = stage.current?.querySelector("video");
+    if (!video) return;
+    if (paused || sheet) video.pause();
+    else void video.play().catch(() => {});
+  }, [paused, sheet, item]);
+
   const seekToRatio = useCallback(
     (clientX: number) => {
       const track = trackEl.current;
       if (!track) return;
       const rect = track.getBoundingClientRect();
       const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / Math.max(rect.width, 1)));
-      watchRef.current = ratio * durationRef.current;
+      resetPosition();
       paintProgress(ratio);
       const video = stage.current?.querySelector("video");
-      if (video) video.currentTime = watchRef.current / 1000;
+      if (video) video.currentTime = ratio * durationRef.current / 1000;
     },
     [paintProgress],
   );
@@ -157,8 +134,7 @@ export function FeedStage({
       }
       const next = index + dir;
       if (next < 0 || next >= items.length) return;
-      const skipped = watchRef.current < 2000 && dir === 1;
-      void send(skipped ? "skip" : watchRef.current >= item.video.duration_ms * 0.9 ? "complete" : "heartbeat");
+      close(dir === 1 ? "next" : "previous");
       watchRef.current = 0;
       paintProgress(0);
       setPaused(false);
@@ -166,7 +142,7 @@ export function FeedStage({
       setIsScrubbing(false);
       setIndex(next);
     },
-    [index, item, items.length, paintProgress, send, sheet],
+    [index, item, items.length, paintProgress, close, sheet],
   );
 
   const { contextSafe } = useGSAP(
@@ -201,27 +177,7 @@ export function FeedStage({
     setIndex(0);
   }, [items]);
 
-  useEffect(() => {
-    if (!item) return;
-    void send("impression");
-    void send("play", { watch_ms: 0 });
-    paintProgress(0);
-  }, [item?.video_id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!item || paused || sheet) return;
-    const tick = window.setInterval(() => {
-      if (seekingRef.current) return;
-      watchRef.current = Math.min(item.video.duration_ms, watchRef.current + 250);
-      paintProgress(watchRef.current / Math.max(item.video.duration_ms, 1));
-      if (watchRef.current >= item.video.duration_ms) {
-        window.clearInterval(tick);
-        void send("complete", { watch_ms: item.video.duration_ms });
-        go(1, false);
-      }
-    }, 250);
-    return () => window.clearInterval(tick);
-  }, [item, paused, index, go, send, paintProgress, sheet]);
+  advanceRef.current = () => go(1, false);
 
   const like = useCallback(() => {
     if (!item) return;
@@ -376,6 +332,11 @@ export function FeedStage({
       {item.kind === "ad" && (
         <p className="mb-2 inline-block rounded-full bg-lab/20 px-3 py-1 text-xs text-lab">Patrocinado</p>
       )}
+      {item.kind === "ad" && item.landing_url && (
+        <button className="pointer-events-auto mb-3 block rounded-lg bg-lab px-4 py-2 font-semibold text-ink"
+          onPointerDown={(e) => e.stopPropagation()} onPointerUp={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); void click(); }}>Visitar sitio</button>
+      )}
       <p data-clip-title className="font-display text-xl font-bold text-balance sm:text-2xl">
         {item.video.title}
       </p>
@@ -424,7 +385,6 @@ export function FeedStage({
             }
             src={srcEntry}
             muted
-            loop
             playsInline
             autoPlay={!paused}
             onError={() => setVideoFailed((prev) => new Set(prev).add(entry.video_id))}
@@ -508,6 +468,7 @@ export function FeedStage({
           </div>
         )}
         <HeartBurst burstId={burst} />
+        {telemetryError && <p role="status" className="absolute top-16 z-30 rounded bg-ink/90 p-2 text-xs text-paper">{telemetryError}</p>}
         <div
           className={cn(
             "pointer-events-none absolute inset-x-0 bottom-12 z-10 px-4",
@@ -562,10 +523,9 @@ export function FeedStage({
               if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
               e.preventDefault();
               const delta = e.key === "ArrowRight" ? 1000 : -1000;
-              watchRef.current = Math.min(durationRef.current, Math.max(0, watchRef.current + delta));
-              paintProgress(watchRef.current / durationRef.current);
               const video = stage.current?.querySelector("video");
-              if (video) video.currentTime = watchRef.current / 1000;
+              resetPosition();
+              if (video) video.currentTime = Math.min(durationRef.current / 1000, Math.max(0, video.currentTime + delta / 1000));
             }}
           >
             <div className="relative h-1 w-full rounded-full bg-paper/25">

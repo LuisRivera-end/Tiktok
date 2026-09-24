@@ -114,8 +114,8 @@ async def upload_video(
     height: int = Form(1920),
     file: UploadFile | None = File(default=None),
 ) -> VideoOut:
-    if current.role not in {"creator", "admin"}:
-        raise HTTPException(status_code=403, detail="Solo un creador puede publicar")
+    if current.role not in {"creator", "advertiser", "admin"}:
+        raise HTTPException(status_code=403, detail="Solo un creador o anunciante puede publicar")
     if category not in CATEGORIES:
         raise HTTPException(status_code=400, detail="Categoría desconocida")
 

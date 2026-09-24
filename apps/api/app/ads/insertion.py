@@ -30,6 +30,8 @@ def insert_ads(
                 "final": item.score,
             },
             "reasons": item.reasons,
+            "predictions": item.predictions,
+            "model_version": item.model_version,
         }
         for item in organic
     ]
@@ -55,8 +57,15 @@ def insert_ads(
                 "campaign_id": winner.ad.campaign_id,
                 "creative_id": winner.ad.creative_id,
                 "source": "auction",
-                "scores": {"ecpm": winner.ecpm, "quality": winner.quality},
+                "scores": {"ecpm": winner.ecpm, "quality": winner.quality, "p_click": winner.ad.p_click},
                 "reasons": ["auction", "retention_gate"],
+                "landing_url": winner.ad.landing_url,
+                "bid_cents": winner.ad.bid_cents,
+                "predictions": {"p_click": winner.ad.p_click, **winner.ad.predictions},
+                "model_version": winner.ad.model_version,
+                "selection_probability": winner.selection_probability,
+                "selection_policy": winner.policy,
+                "eligible_candidates": winner.eligible_ids,
             },
         )
         recent.append(winner.ad.campaign_id)

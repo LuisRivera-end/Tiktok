@@ -55,6 +55,8 @@ async def run_simulation(
     run_id = uuid4().hex[:12]
     for event in events:
         event["session_id"] = f"{run_id}-{event['session_id']}"
+        event["origin"] = "simulated"
+        event["gender"] = "unspecified"
 
     mongo = get_mongo()
     stamped = datetime.now(timezone.utc)

@@ -77,6 +77,7 @@ def features_from_profile(
         age=user.age,
         is_new=not vector,
         region=str(getattr(user, "region", "") or ""),
+        gender=str(getattr(user, "gender", "unspecified") or "unspecified"),
     )
 
 

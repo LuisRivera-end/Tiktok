@@ -1,6 +1,6 @@
 import csv
 import io
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from app.recsys.pipeline import rank_organic_feed
@@ -21,6 +21,7 @@ from app.services.corpus import (
     REGIONS,
     build_orange_csv,
     dashboard_slice,
+    daily_breakdown,
     generate_events,
     injection_plan,
     metrics_from_events,
@@ -379,6 +380,21 @@ def test_dashboard_rates_share_view_denominator_and_ignore_social_actions():
     assert report["completion_rate"] == report["focus"]["completion_rate"] == report["selected"]["completion_rate"] == 0.4667
     assert report["categories"][0]["completion_rate"] == 0.4667
     assert report["early_abandon_rate"] == report["focus"]["early_abandon_rate"] == 0.3333
+
+
+def test_daily_breakdown_counts_events_and_deduplicated_playbacks():
+    stamp = datetime(2026, 9, 24, 12, tzinfo=timezone.utc)
+    base = {"user_id": "u", "video_id": "v", "session_id": "s", "feed_position": 1, "ts": stamp}
+    rows = daily_breakdown([
+        {**base, "event_type": "play", "watch_ms": 0},
+        {**base, "event_type": "heartbeat", "watch_ms": 3000},
+        {**base, "event_type": "complete", "watch_ms": 9000},
+        {**base, "event_type": "like", "watch_ms": 0},
+        {**base, "event_type": "impression", "ts": datetime(2026, 9, 16, 12, tzinfo=timezone.utc)},
+    ], today=date(2026, 9, 24))
+    assert len(rows) == 8
+    assert rows[-1] == {"date": "2026-09-24", "events": 4, "views": 1}
+    assert sum(row["events"] for row in rows) == 4
 
 
 def test_one_real_playback_is_not_multiplied_by_its_events():

@@ -86,7 +86,7 @@ def apply_event(
     event_type = event["event_type"]
     watch_ms = int(event.get("watch_ms") or 0)
     duration_ms = int(event.get("duration_ms") or 1)
-    early = event_type == "skip" or (watch_ms > 0 and watch_ms < 2000 and event_type in {"skip", "heartbeat"})
+    early = event_type == "skip" and watch_ms < 2000
     tag_list = _clean_tags(tags)
 
     counters = profile.setdefault("counters_24h", empty_profile(profile["user_id"])["counters_24h"])

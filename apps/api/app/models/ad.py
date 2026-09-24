@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String
+from sqlalchemy import DateTime, Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 
@@ -24,6 +24,7 @@ class AdCampaign(Base):
     spent_today_cents: Mapped[int] = mapped_column(Integer, default=0)
     targeting_tags: Mapped[list[str]] = mapped_column(JSON, default=list)
     targeting_categories: Mapped[list[str]] = mapped_column(JSON, default=list)
+    targeting_genders: Mapped[list[str]] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     advertiser = relationship("User", back_populates="campaigns")
@@ -50,3 +51,23 @@ class AdBudgetLedger(Base):
     amount_cents: Mapped[int] = mapped_column(Integer)
     reason: Mapped[str] = mapped_column(String(40), default="impression")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class AdClickReceipt(Base):
+    """Durable click + outbox; one transaction with the daily budget ledger."""
+    __tablename__ = "ad_click_receipts"
+    exposure_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    campaign_id: Mapped[str] = mapped_column(ForeignKey("ad_campaigns.id"), index=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    gender: Mapped[str] = mapped_column(String(24))
+    amount_cents: Mapped[int] = mapped_column(Integer, default=0)
+    payload: Mapped[dict] = mapped_column(JSON)
+    synced: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class AdDailySpend(Base):
+    __tablename__ = "ad_daily_spend"
+    campaign_id: Mapped[str] = mapped_column(ForeignKey("ad_campaigns.id"), primary_key=True)
+    day: Mapped[str] = mapped_column(String(10), primary_key=True)
+    amount_cents: Mapped[int] = mapped_column(Integer, default=0)

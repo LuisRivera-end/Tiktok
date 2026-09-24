@@ -38,10 +38,11 @@ def test_high_skip_ad_is_vetoed():
     assert winner is None
 
 
-def test_ecpm_prefers_higher_quality_same_bid():
+def test_ecpm_uses_click_value_quality_is_a_separate_gate():
     weak = _ad(campaign_id="a", p_click=0.2, p_complete=0.1, p_skip=0.5, p_post_retention=0.2)
     strong = _ad(campaign_id="b", p_click=0.2, p_complete=0.8, p_skip=0.05, p_post_retention=0.9)
-    assert ecpm(strong) > ecpm(weak)
+    assert ecpm(strong) == ecpm(weak) == 20_000
+    assert ecpm(_ad(p_click=0.4)) > ecpm(weak)
     assert quality_score(strong) > quality_score(weak)
 
 

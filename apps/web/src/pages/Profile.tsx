@@ -5,9 +5,13 @@ import { IconMore } from "@/components/Icons";
 import { useAuth } from "@/context/Auth";
 import { api, type MeProfile } from "@/lib/api";
 import { duration, gsap, useGSAP } from "@/lib/motion";
+import { GenderSelect } from "@/components/GenderSelect";
+import type { Gender } from "@/lib/gender";
 
 export function ProfilePage() {
-  const { token, user, logout } = useAuth();
+  const { token, user, logout, updateGender } = useAuth();
+  const [gender, setGender] = useState<Gender>(user?.gender ?? "unspecified");
+  const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [profile, setProfile] = useState<MeProfile | null>(null);
   const grid = useRef<HTMLDivElement>(null);
@@ -54,6 +58,15 @@ export function ProfilePage() {
           </button>
         </div>
       )}
+      <form className="mt-6 max-w-md rounded-xl border border-line p-4" onSubmit={async (e) => {
+        e.preventDefault();
+        try { await updateGender(gender); setMessage("Perfil actualizado"); }
+        catch (err) { setMessage(err instanceof Error ? err.message : "No se guardó"); }
+      }}>
+        <GenderSelect value={gender} onChange={setGender} />
+        <button className="mt-4 rounded-lg bg-lab px-4 py-2 text-ink" type="submit">Guardar perfil</button>
+        <p role="status" className="mt-2 text-sm">{message}</p>
+      </form>
       <p className="mt-6 text-sm text-paper/70">
         {profile?.clip_count ?? 0} clips · {profile?.follow_count ?? 0} siguiendo
       </p>

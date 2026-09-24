@@ -1,0 +1,177 @@
+{
+  "origin": "simulated",
+  "purpose": "development and pipeline verification only",
+  "activation_allowed": false,
+  "feature_version": "exposure-v1",
+  "generator": "app.ml.generate / app.ml.demo",
+  "parameters": {
+    "users": 100,
+    "days": 24,
+    "campaigns": 5,
+    "seed": 20260924,
+    "base_date_utc": "2026-05-01",
+    "slots_per_user_day": 8,
+    "ad_slots": [
+      2,
+      7
+    ],
+    "label_maturity_hours": 24
+  },
+  "csv_sha256": "8c4ec68b3de5a77ec0843d347187d72b8bec0a1bddb154e626eee9e500c633f4",
+  "rows": 19200,
+  "first_exposure_utc": "2026-05-01T00:00:00+00:00",
+  "last_exposure_utc": "2026-05-24T04:58:37+00:00",
+  "users": 100,
+  "sessions": 2400,
+  "campaigns": {
+    "demo-campaign-0": 983,
+    "demo-campaign-1": 956,
+    "demo-campaign-2": 902,
+    "demo-campaign-3": 1001,
+    "demo-campaign-4": 958
+  },
+  "genders": {
+    "man": 3840,
+    "other": 3840,
+    "prefer_not_to_say": 3840,
+    "unspecified": 3840,
+    "woman": 3840
+  },
+  "tasks": {
+    "complete": {
+      "observed": 19200,
+      "positive": 9654,
+      "negative": 9546
+    },
+    "engage": {
+      "observed": 19200,
+      "positive": 3253,
+      "negative": 15947
+    },
+    "continue": {
+      "observed": 18388,
+      "positive": 15092,
+      "negative": 3296
+    },
+    "click": {
+      "observed": 4800,
+      "positive": 812,
+      "negative": 3988
+    }
+  },
+  "splits": {
+    "train": {
+      "exposures": 10112,
+      "users": 80,
+      "campaigns": 5,
+      "tasks": {
+        "complete": {
+          "observed": 10112,
+          "positive": 5081,
+          "negative": 5031
+        },
+        "engage": {
+          "observed": 10112,
+          "positive": 1706,
+          "negative": 8406
+        },
+        "continue": {
+          "observed": 9687,
+          "positive": 7932,
+          "negative": 1755
+        },
+        "click": {
+          "observed": 2528,
+          "positive": 425,
+          "negative": 2103
+        }
+      }
+    },
+    "validation": {
+      "exposures": 1664,
+      "users": 80,
+      "campaigns": 5,
+      "tasks": {
+        "complete": {
+          "observed": 1664,
+          "positive": 805,
+          "negative": 859
+        },
+        "engage": {
+          "observed": 1664,
+          "positive": 282,
+          "negative": 1382
+        },
+        "continue": {
+          "observed": 1600,
+          "positive": 1306,
+          "negative": 294
+        },
+        "click": {
+          "observed": 416,
+          "positive": 64,
+          "negative": 352
+        }
+      }
+    },
+    "test": {
+      "exposures": 2304,
+      "users": 80,
+      "campaigns": 5,
+      "tasks": {
+        "complete": {
+          "observed": 2304,
+          "positive": 1134,
+          "negative": 1170
+        },
+        "engage": {
+          "observed": 2304,
+          "positive": 369,
+          "negative": 1935
+        },
+        "continue": {
+          "observed": 2198,
+          "positive": 1828,
+          "negative": 370
+        },
+        "click": {
+          "observed": 576,
+          "positive": 106,
+          "negative": 470
+        }
+      }
+    },
+    "unseen_users": {
+      "exposures": 568,
+      "users": 20,
+      "campaigns": 5,
+      "tasks": {
+        "complete": {
+          "observed": 568,
+          "positive": 283,
+          "negative": 285
+        },
+        "engage": {
+          "observed": 568,
+          "positive": 95,
+          "negative": 473
+        },
+        "continue": {
+          "observed": 542,
+          "positive": 434,
+          "negative": 108
+        },
+        "click": {
+          "observed": 142,
+          "positive": 26,
+          "negative": 116
+        }
+      }
+    }
+  },
+  "limitations": [
+    "No contiene usuarios, impresiones ni clics reales.",
+    "Las preferencias y resultados se muestrean de reglas del generador; no prueban incremento causal.",
+    "El género es una etiqueta sintética para probar agrupaciones, no una inferencia de personas."
+  ]
+}

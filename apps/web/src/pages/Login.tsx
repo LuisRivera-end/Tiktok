@@ -3,6 +3,8 @@ import { Navigate } from "react-router-dom";
 
 import { useAuth } from "@/context/Auth";
 import { duration, gsap, useGSAP } from "@/lib/motion";
+import { GenderSelect } from "@/components/GenderSelect";
+import type { Gender } from "@/lib/gender";
 
 export function LoginPage() {
   const { user, login, register } = useAuth();
@@ -10,6 +12,7 @@ export function LoginPage() {
   const [email, setEmail] = useState("viewer@veta.local");
   const [password, setPassword] = useState("veta1234");
   const [name, setName] = useState("Lía");
+  const [gender, setGender] = useState<Gender>("unspecified");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const page = useRef<HTMLElement>(null);
@@ -42,7 +45,7 @@ export function LoginPage() {
     setError(null);
     try {
       if (mode === "login") await login(email, password);
-      else await register({ email, password, display_name: name, role: "viewer" });
+      else await register({ email, password, display_name: name, role: "viewer", gender });
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo entrar");
     } finally {
@@ -84,6 +87,7 @@ export function LoginPage() {
               />
             </div>
           )}
+          {mode === "register" && <GenderSelect value={gender} onChange={setGender} />}
           <div className="mt-4">
             <label htmlFor="email" className="text-sm">
               Correo

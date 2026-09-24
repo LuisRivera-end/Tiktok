@@ -1,0 +1,2 @@
+# Preserve the generated dataset byte-for-byte so its documented SHA-256 survives checkout.
+data/synthetic/mmoe_v2_exposures.csv -text

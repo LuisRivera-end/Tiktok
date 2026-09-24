@@ -2,12 +2,14 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from "re
 
 import { api, type AuthResponse, type User } from "@/lib/api";
 import { clearSession, readToken, readUser, saveSession } from "@/lib/session";
+import type { Gender } from "@/lib/gender";
 
 type AuthContextValue = {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (payload: { email: string; password: string; display_name: string; role: string }) => Promise<void>;
+  register: (payload: { email: string; password: string; display_name: string; role: string; gender?: Gender }) => Promise<void>;
+  updateGender: (gender: Gender) => Promise<void>;
   logout: () => void;
 };
 
@@ -21,6 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       token,
+      async updateGender(gender) {
+        const updated = await api<User>("/auth/me", { method: "PATCH", body: JSON.stringify({ gender }) }, token ?? undefined);
+        saveSession(token!, updated);
+        setUser(updated);
+      },
       async login(email, password) {
         const res = await api<AuthResponse>("/auth/login", {
           method: "POST",

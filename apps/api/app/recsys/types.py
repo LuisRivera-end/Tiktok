@@ -18,6 +18,7 @@ class UserFeatures:
     age: int = 18
     is_new: bool = True
     region: str = ""
+    gender: str = "unspecified"
 
 
 @dataclass
@@ -49,6 +50,8 @@ class ScoredCandidate:
     score: float
     source: str
     reasons: list[str] = field(default_factory=list)
+    predictions: dict[str, float] = field(default_factory=dict)
+    model_version: str = "heuristic-v1"
 
 
 @dataclass

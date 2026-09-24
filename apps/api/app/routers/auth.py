@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.deps import CurrentUser, DbDep
 from app.models import User
-from app.schemas import LoginIn, RegisterIn, TokenOut, UserOut
+from app.schemas import LoginIn, RegisterIn, TokenOut, UserOut, ProfileUpdateIn
 from app.security import create_access_token, hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -21,6 +21,7 @@ async def register(payload: RegisterIn, db: DbDep) -> TokenOut:
         password_hash=hash_password(payload.password),
         role=role,
         age=payload.age,
+        gender=payload.gender,
     )
     db.add(user)
     try:
@@ -45,4 +46,11 @@ async def login(payload: LoginIn, db: DbDep) -> TokenOut:
 
 @router.get("/me", response_model=UserOut)
 async def me(current: CurrentUser) -> UserOut:
+    return UserOut.model_validate(current)
+
+
+@router.patch("/me", response_model=UserOut)
+async def update_me(payload: ProfileUpdateIn, db: DbDep, current: CurrentUser) -> UserOut:
+    current.gender = payload.gender
+    await db.commit()
     return UserOut.model_validate(current)

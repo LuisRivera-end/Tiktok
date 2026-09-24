@@ -56,6 +56,7 @@ def rank_organic_feed(
         "final": len(final),
         "explore_in_final": explore_count,
         "recycled": recycled,
+        "candidate_ids": [video.id for video, _source in kept],
     }
     return final, trace
 

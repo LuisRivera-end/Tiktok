@@ -1,4 +1,5 @@
 const BASE = import.meta.env.VITE_API_URL || "/api";
+import type { Gender } from "@/lib/gender";
 
 export class ApiError extends Error {
   status: number;
@@ -35,6 +36,7 @@ export type User = {
   display_name: string;
   role: string;
   age: number;
+  gender?: Gender;
 };
 
 export type AuthResponse = {
@@ -43,6 +45,10 @@ export type AuthResponse = {
 };
 
 export type FeedItem = {
+  decision_id?: string;
+  landing_url?: string;
+  predictions?: Record<string, number>;
+  model_version?: string;
   kind: "organic" | "ad";
   video_id: string;
   campaign_id: string | null;
@@ -101,6 +107,12 @@ export type EventTypeMetric = {
   events: number;
 };
 
+export type DailyMetric = {
+  date: string;
+  events: number;
+  views: number;
+};
+
 export type DashboardFocus = {
   region: string;
   category: string;
@@ -134,6 +146,7 @@ export type Metrics = {
   regions?: RegionMetric[];
   categories?: CategoryMetric[];
   event_types?: EventTypeMetric[];
+  daily?: DailyMetric[];
   focus?: DashboardFocus | null;
   selected?: RegionMetric | null;
 };
@@ -186,6 +199,7 @@ export function mediaSrc(url: string | null | undefined): string | null {
 }
 
 export type Campaign = {
+  targeting_genders: string[];
   id: string;
   name: string;
   status: string;

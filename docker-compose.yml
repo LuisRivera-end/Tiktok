@@ -35,10 +35,14 @@ services:
       MONGO_DB: veta_telemetry
       API_CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173
       SEED_ON_START: "true"
+      CONTENT_MODEL_MODE: ${CONTENT_MODEL_MODE:-heuristic}
+      ADS_MODEL_MODE: ${ADS_MODEL_MODE:-heuristic}
+      MMOE_MODEL_PATH: ${MMOE_MODEL_PATH:-artifacts/mmoe/model.json}
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
       - api_media:/app/media
+      - ./apps/api/artifacts:/app/artifacts:ro
     depends_on:
       postgres:
         condition: service_healthy

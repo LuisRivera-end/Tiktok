@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Literal
 
 
 class Settings(BaseSettings):
@@ -17,6 +18,9 @@ class Settings(BaseSettings):
     api_cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080"
     seed_on_start: bool = False
     media_dir: str = "media"
+    content_model_mode: Literal["heuristic", "shadow", "mmoe"] = "heuristic"
+    ads_model_mode: Literal["heuristic", "shadow", "mmoe"] = "heuristic"
+    mmoe_model_path: str = "artifacts/mmoe/model.json"
 
     @property
     def cors_origins(self) -> list[str]:

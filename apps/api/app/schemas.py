@@ -1,4 +1,8 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+from uuid import UUID
+from typing import Literal
+from pydantic import BaseModel, Field, HttpUrl
+from app.demographics import Gender, TargetGender
 
 
 class RegisterIn(BaseModel):
@@ -7,6 +11,11 @@ class RegisterIn(BaseModel):
     password: str = Field(min_length=8, max_length=72)
     role: str = "viewer"
     age: int = Field(default=18, ge=13, le=99)
+    gender: Gender = "unspecified"
+
+
+class ProfileUpdateIn(BaseModel):
+    gender: Gender
 
 
 class LoginIn(BaseModel):
@@ -26,6 +35,7 @@ class UserOut(BaseModel):
     display_name: str
     role: str
     age: int
+    gender: Gender = "unspecified"
 
     model_config = {"from_attributes": True}
 
@@ -64,6 +74,11 @@ class VideoCreateIn(BaseModel):
 
 
 class EventIn(BaseModel):
+    event_id: UUID | None = None
+    exposure_id: UUID | None = None
+    event_ts: datetime | None = None
+    coverage_ms: int = Field(default=0, ge=0)
+    close_reason: Literal["next", "previous", "ended", "exit", "ad_click", "error"] | None = None
     session_id: str
     video_id: str
     event_type: str
@@ -79,17 +94,38 @@ class EventIn(BaseModel):
 
 
 class EventBatchIn(BaseModel):
-    events: list[EventIn]
+    events: list[EventIn] = Field(max_length=100)
+
+
+class ExposureIn(BaseModel):
+    exposure_id: UUID
+    decision_id: UUID | None = None
+    video_id: str
+    session_id: str = Field(min_length=1, max_length=100)
+    started_at: datetime | None = None
+
+
+class AdClickIn(BaseModel):
+    exposure_id: UUID
 
 
 class CampaignIn(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=120)
     bid_cents: int = Field(ge=1)
     daily_budget_cents: int = Field(ge=0)
     targeting_tags: list[str] = Field(default_factory=list)
     targeting_categories: list[str] = Field(default_factory=list)
     video_id: str
-    landing_url: str = "https://example.edu"
+    landing_url: HttpUrl = "https://example.edu"
+    targeting_genders: list[TargetGender] = Field(default_factory=list)
+
+
+class CampaignUpdateIn(BaseModel):
+    status: Literal["active", "paused"] | None = None
+    targeting_genders: list[TargetGender] | None = None
+    targeting_tags: list[str] | None = None
+    targeting_categories: list[str] | None = None
+    daily_budget_cents: int | None = Field(default=None, ge=0)
 
 
 class CampaignOut(BaseModel):
@@ -101,6 +137,7 @@ class CampaignOut(BaseModel):
     spent_today_cents: int
     targeting_tags: list[str]
     targeting_categories: list[str]
+    targeting_genders: list[str] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
 

@@ -7,7 +7,7 @@ import { api, type FeedResponse } from "@/lib/api";
 type Lane = "foryou" | "following" | "friends";
 
 export function FeedPage({ initialLane = "foryou", showLanes = true }: { initialLane?: Lane; showLanes?: boolean }) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [lane, setLane] = useState<Lane>(initialLane);
   const [data, setData] = useState<FeedResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -16,13 +16,17 @@ export function FeedPage({ initialLane = "foryou", showLanes = true }: { initial
   const load = useCallback(() => {
     if (!token) return;
     const query = lane === "foryou" ? "foryou" : lane;
-    api<FeedResponse>(`/feed?lane=${query}`, {}, token)
+    api<FeedResponse>(`/feed?lane=${query}&session_id=${encodeURIComponent(sessionId)}`, {}, token)
       .then(setData)
       .catch((err: Error) => setError(err.message));
-  }, [token, lane]);
+  }, [token, lane, sessionId, user?.gender]);
 
   useEffect(() => {
     load();
+    let timer: number;
+    const refresh = () => { window.clearTimeout(timer); timer = window.setTimeout(load, 100); };
+    window.addEventListener("veta:refresh-feed", refresh);
+    return () => { window.clearTimeout(timer); window.removeEventListener("veta:refresh-feed", refresh); };
   }, [load]);
 
   useEffect(() => {

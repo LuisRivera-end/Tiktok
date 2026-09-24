@@ -11,8 +11,57 @@ from app.mongo import get_mongo
 from app.schemas import SimIn
 from app.services.corpus import build_orange_csv, dashboard_slice, with_dimensions
 from app.services.simulator import run_simulation
+from app.telemetry.exposures import dataset_rows, metrics_for, csv_export
+from app.ml.readiness import assess
+from app.ml.demo import demo_exposures
+from app.demographics import Gender, GENDERS
+from typing import Literal
 
 router = APIRouter(prefix="/lab", tags=["lab"])
+
+
+def _simulated_exposure_rows(now: datetime) -> list[dict]:
+    """Reproducible demo data; never reads or writes application records."""
+    start = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=6)
+    return dataset_rows(demo_exposures(users=60, days=5, seed=42, base=start), now)
+
+
+@router.get("/exposures/readiness")
+async def exposure_readiness(current: CurrentUser):
+    if current.role != "admin":
+        raise HTTPException(403, "El diagnóstico de entrenamiento requiere administrador")
+    exposures = [e async for e in get_mongo().exposures.find({"origin": "real"})]
+    return assess(dataset_rows(exposures))
+
+
+@router.get("/exposures/metrics")
+async def exposure_metrics(current: CurrentUser, days: int = Query(default=7, ge=1, le=365),
+                           gender: Gender | None = None, origin: Literal["real", "simulated"] = "real"):
+    now = datetime.now(timezone.utc)
+    since = now - timedelta(days=days)
+    if origin == "simulated":
+        rows = [r for r in _simulated_exposure_rows(now) if datetime.fromisoformat(r["started_at"]) >= since]
+    else:
+        exposures = [e async for e in get_mongo().exposures.find({"origin": "real", "started_at": {"$gte": since}})]
+        rows = dataset_rows(exposures, now)
+    if gender:
+        rows = [r for r in rows if r["gender"] == gender]
+    return {"origin": origin, "days": days, **metrics_for(rows),
+            "genders": [{"gender": g, **metrics_for([r for r in rows if r["gender"] == g])} for g in GENDERS]}
+
+
+@router.get("/orange/exposures.csv")
+async def export_exposures(current: CurrentUser, origin: Literal["real", "simulated"] = "real"):
+    if current.role != "admin":
+        raise HTTPException(403, "La exportación de entrenamiento requiere administrador")
+    if origin == "simulated":
+        rows = _simulated_exposure_rows(datetime.now(timezone.utc))
+    else:
+        exposures = [e async for e in get_mongo().exposures.find({"origin": "real"})]
+        rows = dataset_rows(exposures)
+    content = csv_export(rows).encode("utf-8")
+    return StreamingResponse(io.BytesIO(content), media_type="text/csv",
+                             headers={"Content-Disposition": "attachment; filename=veta_exposures.csv"})
 
 
 def _enrich(events: list[dict], users: dict, videos: dict) -> list[dict]:

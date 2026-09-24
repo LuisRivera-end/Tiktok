@@ -53,7 +53,7 @@ export function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [note, setNote] = useState<string | null>(null);
 
-  const canPublish = user?.role === "creator" || user?.role === "admin";
+  const canPublish = user?.role === "creator" || user?.role === "advertiser" || user?.role === "admin";
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
